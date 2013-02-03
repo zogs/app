@@ -63,7 +63,7 @@
 	  <div class="navbar-inner">
 	    <div class="container">
       		<a class="brand" href="#">
-	      	  	Base
+	      	  	<?php echo Conf::$website;?>
 			</a>
 			<form class ="navbar-search pull-left" action="<?php echo Router::url('manifs/index'); ?>" method="get">
 			<input type ="text" class="search-query nav-search" name="rch" placeholder="Search">

@@ -36,7 +36,7 @@ class UsersController extends Controller{
 									
 					//update last login
 					$last = new stdClass();
-					$last->date_lastlogin = unixToMySQL(time());
+					$last->date_lastlogin = Date::MysqlNow(time());
 					$last->user_id = $user->user_id;
 					$this->Users->save($last);
 

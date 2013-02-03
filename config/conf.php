@@ -5,9 +5,9 @@ class Conf {
 
 	static $debug = 1;
 	static $adminPrefix = 'cockpit';
-	static $website = 'BaseSite';
-	static $websiteURL = 'http://localhost/base';
-	static $websiteDOT = 'base.com';
+	static $website = 'app';
+	static $websiteURL = 'http://localhost/app';
+	static $websiteDOT = 'app.com';
 	static $lang = 'fr';
 	static $pays = 'FR';
 	static $databases = array(
@@ -52,13 +52,5 @@ class Conf {
 		);
 }
 
-//Prefixe
-Router::prefix(Conf::$adminPrefix,'admin');
-
-//Connect
-Router::connect('','posts/index'); //Racine du site ( à laisser en premiere regle !)
-Router::connect('cockpit','cockpit/posts/index');
-Router::connect('blog/:slug-:id','posts/view/id:([0-9]+)/slug:([a-zA-Z0-9\-]+)');
-Router::connect('blog/*','posts/*');
 
 ?>

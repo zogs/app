@@ -1,5 +1,5 @@
 <?php 
-class Users extends Model{
+class UsersModel extends Model{
 
 	public $primaryKey = 'user_id';
 
