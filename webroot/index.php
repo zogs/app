@@ -8,7 +8,8 @@ define('DS',DIRECTORY_SEPARATOR);
 define('CORE',ROOT.DS.'core');
 define('BASE_URL',dirname(dirname($_SERVER['SCRIPT_NAME'])));
 
-
+//usefull functions
+include '../core/functions.php';
 
 //init autoloader
 //page github https://github.com/jonathankowalski/autoload

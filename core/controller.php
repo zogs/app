@@ -48,9 +48,20 @@ class Controller {
 			$view = ROOT.DS.'view'.DS.$this->view.'.php';
 		}
 
+		//check if the view exist
+		if(!file_exists($view)){
+			
+			if(Conf::$debug==1){
+				$this->e404('The controller :'.$this->request->controller.' has no view :'.$this->request->action);
+				exit();
+			}
+			else {
+				$this->e404('This page don\'t work... We\'re sorry :(');
+				exit();
+			}
+		}
 		
 		//Recuperation des données du viewer
-
 		ob_start();
 		require $view;
 		$content_for_layout = ob_get_clean();
