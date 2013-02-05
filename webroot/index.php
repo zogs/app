@@ -17,10 +17,12 @@ $loader = JK\Autoloader::getInstance()
 ->addDirectory('../config')
 ->addDirectory('../controller')
 ->addDirectory('../core')
-->addDirectory('../model');
+->addDirectory('../model')
+->addEntireDirectory('../lib');
 
-//Mail librairy
-//require '../lib/SwiftMailer/swift_required.php';
+
+//Librairy dependency
+require '../lib/SwiftMailer/swift_required.php';//Swift mailer
 
 
 //define routes for the router

@@ -113,13 +113,13 @@ class UsersController extends Controller{
 					//user object
 					$user = new stdClass();
 					$user = $data;
-					$user->salt = randomString(10);
+					$user->salt = String::random(10);
 					$user->hash = md5($user->salt.$data->password);
-					$user->codeactiv = randomString(25);
+					$user->codeactiv = String::random(25);
 					$user->password = '';
 					$user->confirm = '';
 					$user->lang = $this->session->user('lang');
-					$user->date_signin = unixToMySQL(time());	
+					$user->date_signin = Date::MysqlNow();	
 					$user->date_lastlogin = $user->date_signin;				
 
 					//check if login exist
@@ -712,15 +712,8 @@ class UsersController extends Controller{
 
 		$lien = Conf::$websiteURL."/users/recovery?c=".urlencode(base64_encode($code))."&u=".urlencode(base64_encode($user_id));
 
-        //Création d'une instance de swift transport (SMTP)
-        $transport = Swift_SmtpTransport::newInstance()
-          ->setHost('smtp.manifeste.info')
-          ->setPort(25)
-          ->setUsername('admin@manifeste.info')
-          ->setPassword('XSgvEPbG');
-
         //Création d'une instance de swift mailer
-        $mailer = Swift_Mailer::newInstance($transport);
+        $mailer = Swift_Mailer::newInstance(Conf::getTransportSwiftMailer());
        
         //Récupère le template et remplace les variables
         $body = file_get_contents('../view/email/recoveryPassword.html');
@@ -751,18 +744,8 @@ class UsersController extends Controller{
 
 		$lien = Conf::$websiteURL."/users/validate?c=".urlencode(base64_encode($codeactiv))."&u=".urlencode(base64_encode($user_id));
 
-        //Création d'une instance de swift transport (SMTP)
-        $transport = Swift_SmtpTransport::newInstance()
-          ->setHost('smtp.manifeste.info')
-          ->setPort(25)
-          ->setUsername('admin@manifeste.info')
-          ->setPassword('XSgvEPbG');
-
         //Création d'une instance de swift mailer
-        $mailer = Swift_Mailer::newInstance($transport);
-       
-        //Genère un mot de passe aléatoire
-        $pass = randomString(10);
+        $mailer = Swift_Mailer::newInstance(Conf::getTransportSwiftMailer());
        
         //Récupère le template et remplace les variables
         $body = file_get_contents('../view/email/validateAccount.html');
