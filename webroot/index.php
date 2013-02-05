@@ -10,10 +10,8 @@ define('BASE_URL',dirname(dirname($_SERVER['SCRIPT_NAME'])));
 
 
 
-//require(CORE.DS.'includes.php');
-
-//include autoloader
-//github https://github.com/jonathankowalski/autoload
+//init autoloader
+//page github https://github.com/jonathankowalski/autoload
 include '../core/autoloader.php';
 $loader = JK\Autoloader::getInstance()
 ->addDirectory('../config')
@@ -21,7 +19,7 @@ $loader = JK\Autoloader::getInstance()
 ->addDirectory('../core')
 ->addDirectory('../model');
 
-//
+//Mail librairy
 //require '../lib/SwiftMailer/swift_required.php';
 
 

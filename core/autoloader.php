@@ -216,8 +216,8 @@ class JsonFileCache implements AutoloadCacheManager {
 	const FILENAME = 'class_loader_cache.json';	
 
 	protected function init(){
-		if( !$this->loaded && file_exists( $this->filelocation . DIRECTORY_SEPARATOR . self::FILENAME ) ){			
-			$this->cache = json_decode( file_get_contents($this->filelocation . DIRECTORY_SEPARATOR . self::FILENAME ), true );
+		if( !$this->loaded && file_exists( $this->filelocation . DS . self::FILENAME ) ){			
+			$this->cache = json_decode( file_get_contents($this->filelocation . DS . self::FILENAME ), true );
 		}
 		$this->loaded = true;
 	}
@@ -236,7 +236,7 @@ class JsonFileCache implements AutoloadCacheManager {
 		return $this;
 	}
 	public function save(){				
-		file_put_contents( $this->filelocation. DIRECTORY_SEPARATOR .self::FILENAME, json_encode( $this->cache ) );
+		file_put_contents( __DIR__.DS.$this->filelocation. DS .self::FILENAME, json_encode( $this->cache ) );
 	}
 }
 
