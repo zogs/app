@@ -6,6 +6,8 @@ class Session {
 		$this->controller = $controller;
 
 		if(!isset($_SESSION)){
+
+			//session_save_path('/tmp');
 			session_start();
 
 			if(!isset($_SESSION['token'])){

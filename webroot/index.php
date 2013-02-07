@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors','1');
+
 //$debut = microtime(true);
 
 define('WEBROOT',dirname(__FILE__));
@@ -14,7 +17,7 @@ include '../core/functions.php';
 //init autoloader
 //page github https://github.com/jonathankowalski/autoload
 include '../core/autoloader.php';
-$loader = JK\Autoloader::getInstance()
+$loader = Autoloader::getInstance()
 ->addDirectory('../config')
 ->addDirectory('../controller')
 ->addDirectory('../core')
