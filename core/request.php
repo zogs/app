@@ -23,12 +23,12 @@ class Request{
 					if(is_array($v)){
 						$arr = array();
 						foreach ($v as $key => $value) {
-							$arr[$key] = mysql_escape_string($value);
+							$arr[$key] = mysql_real_escape_string($value);
 						}
 						$v = $arr;
 					}
 					else
-						$v = mysql_escape_string($v);
+						$v = mysql_real_escape_string($v);
 				}
 				$this->get->$k = $v;
 			}						
@@ -51,12 +51,12 @@ class Request{
 					if(is_array($v)){
 						$arr = array();
 						foreach ($v as $key => $value) {
-							$arr[$key] = mysql_escape_string($value);
+							$arr[$key] = mysql_real_escape_string($value);
 						}
 						$v = $arr;
 					}
 					else
-						$v = mysql_escape_string($v);
+						$v = mysql_real_escape_string($v);
 				}
 				$this->data->$k = $v;
 			}

@@ -7,7 +7,7 @@
  	public $db = false; //Connexion courante à la base
  	public $primaryKey = 'id'; //Nom de la clef primaire de la table
  	public $id; //valeur de la clef courante
- 	public $action;
+ 	public $action; 	
  	public $errors = array(); // tableaux des erreurs à afficher
 
 
@@ -24,14 +24,10 @@
 
  		//Creation de la connexion a la base de donnée
  		//Si la connexion existe déja, return true
- 		if(isset($this->connections[$this->conf])){
+ 		if(isset(Model::$connections[$this->conf])){
  			$this->db = Model::$connections[$this->conf];
  			return true;	
- 		} 
- 		
- 		//Cache
- 		$this->cacheModel = new Cache(Conf::$cacheLocation,60*24*7);
-
+ 		}  		 		 		
 
  		//On essaye de se connecter a la base
  		try{
@@ -119,7 +115,7 @@
 	 			foreach ($req['conditions'] as $k => $v) {
 	 				//On escape les valeurs
 	 				if(!is_numeric($v)){ 
-	 					$v = '"'.mysql_escape_string($v).'"';	 					
+	 					$v = '"'.mysql_real_escape_string($v).'"';	 					
 	 				}
 	 				
 	 				//On incremente le tableau avec les conditions
@@ -211,6 +207,12 @@
 
  	}
 
+ 	/*===========================================================	        
+ 	Delete
+ 	@param $obj = object of values 
+ 	@work delete from default table or $obj->table 
+ 	@work line with default key or $obj->key equal to $obj->id
+ 	============================================================*/
  	public function delete($obj){
 
  		if(is_numeric($obj)){
@@ -248,6 +250,7 @@
  	
  	public function save($data){
 
+ 		//If a table is specified
  		if(isset($data->table)){
  			$table = $data->table;
  			unset($data->table);
@@ -255,13 +258,15 @@
  		else
  			$table = $this->table;
 
+ 		//if a primary key is specified
  		if(isset($data->key)){
  			$primaryKey = $data->key;
  			unset($data->key);
  		}
  		else
  			$primaryKey = $this->primaryKey;
- 	
+
+
  		$fields = array();
  		$tab = array();
  
@@ -280,7 +285,7 @@
  		// debug($data);
  		// debug($key);
  		//Si la clef existe on fait un update
- 		if(isset($data->$primaryKey) && !empty($data->$primaryKey)){
+ 		if(isset($data->$primaryKey) && !empty($data->$primaryKey) && $data->$primaryKey!=0){
 
  			$action = 'update';
  			$sql = 'UPDATE '.$table.' SET '.implode(',',$fields).' WHERE '.$primaryKey.'=:'.$primaryKey;
@@ -293,9 +298,10 @@
  			$sql = 'INSERT INTO '.$table.' SET '.implode(',',$fields);
  		}
  		
-
- 		// debug($sql);
+ 		
+ 		 
  		$pre = $this->db->prepare($sql); //prepare la requete
+ 		//debug($pre);
  		$pre->execute($tab); //execute la requete grace au tableaux des valeurs ( :name, :contenu, :date, ...)
  		
  		//Si c'est un insert on recupere l'id de l'insertion
@@ -316,7 +322,6 @@
  		} 
  		
  	}
-
  	public function increment($data){
 
  		if ( isset($data['table'])) {
@@ -340,7 +345,6 @@
  	}
 
 	public function validates($data, $rules = null, $field = null){
-
 
 		$errors = array();
 
@@ -509,7 +513,7 @@
  			$cond = array();
 	 			foreach ($conditions as $k => $v) {
 	 				if(!is_numeric($v)){ 
-	 					$v = '"'.mysql_escape_string($v).'"';	 					
+	 					$v = '"'.mysql_real_escape_string($v).'"';	 					
 	 				}
 	 				$cond[] = "$k=$v";	 			
 	 			}
@@ -546,7 +550,7 @@
 	 			$cond = array();
 	 			foreach ($conditions as $k => $v) {
 	 				if(!is_numeric($v) && substr($v, 0, 1) != ':' )
-	 					$v = '"'.mysql_escape_string($v).'"';
+	 					$v = '"'.mysql_real_escape_string($v).'"';
 	 				$cond[] = "$k=$v";
 	 			}
 	 			$c .= implode(' AND ',$cond);

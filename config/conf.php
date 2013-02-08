@@ -36,6 +36,7 @@ class Conf {
 
 	//Cache
 	static $cacheLocation = 'D:/wamp/www/ypp/webroot/cache';
+	static $cacheLocationDuration = 10080; //(60*24*7);
 
 
 	//Css to load 
