@@ -68,7 +68,7 @@ Bootstrap
 .btn { border-radius: 0; -moz-border-radius:0; -webkit-border-radius:0; }
 
 /*
-Login
+Top bar login
 */
 form.loginForm { margin:0; padding:5px 0 0 0; display:inline-block; float:right; text-align:right; color:white;}
 form.loginForm input { padding-left: 5px; background:#626262; border:1px solid #151515; }
@@ -82,7 +82,7 @@ form.loginForm input[type=submit]:hover { background-color:#EBEBEB;}
 
 
 /*
-Index Manif
+Geo select
 */
 div.geo-select { margin-bottom:8px;}
 div.geo-select .select2-choice { padding:4px 5px; width:100%; height:auto; outline:none; border:0; border-radius:0; border:1px solid #CCC; border-radius:3px ; background-color:white; background-image:none; text-align:left; line-height:inherit; }
@@ -112,7 +112,7 @@ div.geo-select .select2-result { padding:5px 0; }
 .homepage { }
 .formular { width:60%;}
 /*
-Inscription
+User registration page
 */
 .register h1 { text-align:center; margin-bottom:10px;}
 .register p { overflow:hidden;width:100%;}
@@ -137,9 +137,6 @@ Inscription
 .form .control-error .controls p.help-inline strong { font-style: italic; text-transform: capitalize;}
 .form input[type=submit] { margin-top:20px; margin-bottom:50px; float:left;}
 
-.form .label_bonhom { float:left; margin:0 5px; width:50px; text-align:center; cursor:pointer;}
-.form .label_bonhom img { width:50px; border:1px solid #BBB;}
-.form .label_bonhom input[type=radio] { display:inline;}
 .register #click_me { float:left; display:block;  display:none; margin-top:10px; padding:5px 0; width:100%; color:#444; text-align:center; font-weight:bold; }
 .register #click_me:hover { color:rgb(153,0,0); text-decoration:none; cursor:pointer;}
 .register #show_me { display:none; }
@@ -157,7 +154,7 @@ Inscription
     .autocomplete strong { font-weight: normal; color: #3399FF; }
 
 /*
-Account
+User account page
 */
 #account { margin-top:20px;}
 .account-form {width:550px; float:right; }
@@ -181,6 +178,8 @@ Account
 .size32 { width:32px; height:32px;}
 .fleft { float:left;}
 .fright { float:right;}
+
+
 /**
 * Formulaire
 */

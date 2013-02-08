@@ -20,7 +20,7 @@ class UsersController extends Controller{
 				$field = 'login';
 			
 			$user = $this->Users->findFirst(array(
-				'fields'=> 'user_id,login,avatar,hash,salt,lang',
+				'fields'=> 'user_id,login,avatar,hash,salt,lang,role',
 				'conditions' => array($field=>$login))
 			);
 			
