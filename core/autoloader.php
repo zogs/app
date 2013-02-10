@@ -1,7 +1,5 @@
 <?php
 
-namespace JK;
-
 class Autoloader {
 
 	protected static $instance;
@@ -247,5 +245,5 @@ class JsonFileCache implements AutoloadCacheManager {
 
 
 //Exceptions
-class NotStandardInclude extends \Exception {}
-class UnfoundClass extends \Exception {}
+class NotStandardInclude extends Exception {}
+class UnfoundClass extends Exception {}

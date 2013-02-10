@@ -147,18 +147,20 @@
  		if($pre->errorCode()==0)
 			return $pre->fetchAll(PDO::FETCH_OBJ); 		
  		else
- 			$this->reportPDOError($pre,__FUNCTION__);	
+ 			$this->reportPDOError($pre,__FUNCTION__,$sql);	
  		
  		
  	}
 
- 	public function reportPDOError($pdo,$function){
+ 	public function reportPDOError($pdo,$function,$sql){
 
- 		if(Conf::$debug==1){
+ 		if(DEBUG>=1){
 
  			$error = $pdo->errorInfo();
  			debug('SQL Error in: function '.$function.', class '.get_class($this).', '.__FILE__);
  			debug($error[2]); 				
+ 			debug($sql);
+ 			exit();
  			
 		}
 		else {
@@ -175,13 +177,12 @@
  	// Execute une requete sql
  	public function query($sql){
 
- 		// debug($sql);
  		$pre = $this->db->prepare($sql);
  		$pre->execute();
  		if($pre->errorCode()==0)
  			return $pre->fetchAll(PDO::FETCH_OBJ);
  		else
- 			$this->reportPDOError($pre,__FUNCTION__);
+ 			$this->reportPDOError($pre,__FUNCTION__,$sql);
  	}
 
 
@@ -216,7 +217,7 @@
  	public function delete($obj){
 
  		if(is_numeric($obj)){
-	 		$sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey}=$id";
+	 		$sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey}=$obj";
 	 		$res = $this->db->query($sql);
 			return $res;
 		}
@@ -273,7 +274,7 @@
  		//Pour chaque champ on cree les tableaux des valeurs 
  		foreach ($data as $k => $v) {
  			if($k!=$primaryKey){ //sauf si il s'agit de la clef primaire
- 				if(!empty($v)) {	// si la valeur nest pas vide
+ 				if(!empty($v)||$v==0) {	// si la valeur nest pas vide , ou si elle egale 0
 		 			$fields[] = "$k=:$k"; //tableaux des valeurs en sql
 		 			$tab[":$k"] = $v; //tableau des valeurs pour la fonction execute de PDO
 	 			}

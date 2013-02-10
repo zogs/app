@@ -1,13 +1,12 @@
 <div id="account">
 	
 	<?php echo $this->session->flash();?>
-
-
+	
 	<div class="dashboard">		
 		<div class="module mini-profile">		
 			<a class="" href="/">
 				<div class="fleft"><img src="<?php echo Router::webroot($this->session->user('obj')->getAvatar());?>" class="avatar size32" alt="<?php echo $user->login;?>"></div>
-				<div class="fleft"><b><?php echo $user->login;?></b></div>
+				<div class="fleft"><b><?php echo $user->getLogin();?></b></div>
 		</div>
 
 		<div class="module">
@@ -54,7 +53,7 @@
 				
 				<?php echo $this->Form->input('prenom','Prenom',array('icon'=>'icon-user','placeholder'=>'Prenom')); ?>
 				<?php echo $this->Form->input('nom','Nom',array('icon'=>'icon-user','placeholder'=>'Nom')); ?>					
-				<?php echo $this->Form->SelectNumber('age','Birth year',2006,1950,array('default'=>$user->age,'icon'=>'icon-gift','placeholder'=>"( Your birth year )")) ;?>	
+				<?php echo $this->Form->SelectNumber('age','Birth year',2006,1950,array('default'=>$user->getAge(),'icon'=>'icon-gift','placeholder'=>"( Your birth year )")) ;?>	
 
 				<div class="control-group">	
 					<label for="CC1" class="control-label">Localisation</label>			

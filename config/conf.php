@@ -42,6 +42,7 @@ class Conf {
 	//Css to load 
 	static $css = array(						
 						'bootstrap/css/bootstrap.css',
+						'css/default.css',
 						'css/style.css',
 						'js/jquery/select2-2.1/select2.css'
 						);

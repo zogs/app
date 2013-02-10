@@ -1,5 +1,7 @@
 <div class="page-header">
-	<h1><?php echo $total ?> articles
+	<h1>Articles du blog</h1>
+	<h2><?php echo $total ?> articles</h2>
+
 </div>
 
 <table class="table table-striped">

@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
 <head>
-	<link rel="stylesheet" style="text/css" href="http://www.manifeste.info/css/bootstrap/css/bootstrap.css" />
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-
-	<title><?php echo isset($title_for_layout)?$title_for_layout : 'Admin.';?></title>
-	
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <?php $this->loadCSS();?>
+        <?php $this->loadJS();?>         
+        <script type="text/javascript" src="<?php echo Router::webroot('js/jquery/tiny_mce/tiny_mce.js'); ?>"></script>       
+        <title><?php echo isset($title_for_layout)?$title_for_layout : 'Admin.';?></title>
+        
 </head>
 <body>
 
-	<div class="navbar" style="position:static">
-	  <div class="navbar-inner">
-	    <div   class="container">
-	      <a class="brand" href="<?php echo Router::url('admin/posts/index'); ?>">
-	  			Admin.
-			</a>
-			<form class ="navbar-search pull-left">
-			<input type ="text" class="search-query" placeholder="Search">
-			</form>
+        <div class="navbar" style="position:static">
+          <div class="navbar-inner">
+            <div   class="container">
+              <a class="brand" href="<?php echo Router::url('admin/posts/index'); ?>">
+                                Admin.
+                        </a>
+                        <form class ="navbar-search pull-left">
+                        <input type ="text" class="search-query" placeholder="Search">
+                        </form>
 
-			<ul class="nav">
-				<li><a href="<?php echo Router::url('/'); ?>">Voir le site</a></li>
-				<li><a href="<?php echo Router::url('admin/posts/index'); ?>">Article</a></li>
-				<li><a href="<?php echo Router::url('admin/pages/index'); ?>">Pages</a></li>
+                        <ul class="nav">
+                                <li><a href="<?php echo Router::url('/'); ?>">Voir le site</a></li>
+                                <li><a href="<?php echo Router::url('admin/posts/index'); ?>">Article</a></li>
+                                <li><a href="<?php echo Router::url('admin/pages/index'); ?>">Pages</a></li>
                                 <li><a href="<?php echo Router::url('users/logout'); ?>">Deconnexion</a></li>
-				
-			</ul>
-		</div>
-	  </div>
-	</div>
+                                
+                        </ul>
+                </div>
+          </div>
+        </div>
 
-	<div class="container">
+        <div class="container">
 
-		<?php echo $this->session->flash();?>
-		<?php echo $content_for_layout;?>
-	</div>
+                <?php echo $this->session->flash();?>
+                <?php echo $content_for_layout;?>
+        </div>
 </body>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo Router::webroot('js/tinymce/tiny_mce.js'); ?>"></script>
+
 <script type="text/javascript">
 tinyMCE.init({
         // General options

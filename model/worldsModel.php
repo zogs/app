@@ -167,6 +167,9 @@ class WorldsModel extends Model
  	//				ADM..=>
  	public function findCities($CC1, $ADM){
 
+ 		//first, return false if there is no city to find
+ 		if(isset($ADM['city'])&&$ADM['city']==0) return false;
+ 		
  		//reformat ADM array 
 	 	$ADM = $this->formatADMArray($ADM);
 

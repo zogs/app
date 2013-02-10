@@ -9,7 +9,23 @@ var ajaxLoader = "#ajaxLoader";
 $(document).ready(function(){
 	
 
+	/*===========================================================
+		Autocomplete cityName input
+	============================================================*/
 
+	var inputcity = $("#inputcityName");
+	if(inputcity.size()){
+		var hiddencity = $("#cityID");
+		var url = inputcity.attr('data-autocomplete-url');
+
+	  	inputcity.autocomplete({
+	  			serviceUrl:url,
+	  			minChars:3,
+	  			onSelect:function(value,data){ 
+	  				
+	  				hiddencity.val(data)},
+	  		});
+  	}
 	/*===========================================================
 		Security token send with AJAX /!\
 	============================================================*/
@@ -41,16 +57,18 @@ $(document).ready(function(){
 		@param data-expandtext
 		@param data-collapsetext
 	============================================================*/
-    $('.expandable').livequery(function(){
-
-    	$(this).expander({
-    		slicePoint: $(this).attr('data-maxlength'),
-    		expandPrefix: ' ',
-    		expandText: $(this).attr('data-expandtext'),
-    		userCollapseText: $(this).attr('data-collapsetext'),
-    		userCollapsePrefix: ' ',
+	var expands = $('.expandable');
+	if(expands.size()){
+		expands.livequery(function(){
+	    	$(this).expander({
+	    		slicePoint: $(this).attr('data-maxlength'),
+	    		expandPrefix: ' ',
+	    		expandText: $(this).attr('data-expandtext'),
+	    		userCollapseText: $(this).attr('data-collapsetext'),
+	    		userCollapsePrefix: ' ',
+	    	});
     	});
-    });
+	}
 
 		
 	/*===========================================================

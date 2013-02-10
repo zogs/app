@@ -332,6 +332,11 @@ class User {
 		else return 'img/logo.png';
 	}
 
+	public function getAge(){
+
+		if(isset($this->age)&&!empty($this->age)) return $this->age;
+		else return 0;
+	}
 
 }
  ?>

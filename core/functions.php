@@ -2,7 +2,7 @@
 
 function debug($var){
 
-	if(Conf::$debug==1){
+	if(DEBUG>=1){
 		$debug = debug_backtrace();
 		echo '<p>&nbsp;</p><p><a href="#" onclick="$(this).parent().next(\'ol\').slideToggle(); return false;" ><strong>'.$debug[0]['file'].'</strong> Ligne .'.$debug[0]['line'].'</a></p>';
 		
