@@ -7,7 +7,7 @@
  	public $db = false; //Connexion courante à la base
  	public $primaryKey = 'id'; //Nom de la clef primaire de la table
  	public $id; //valeur de la clef courante
- 	public $action; 	
+ 	public $action;
  	public $errors = array(); // tableaux des erreurs à afficher
 
 
@@ -27,8 +27,8 @@
  		if(isset(Model::$connections[$this->conf])){
  			$this->db = Model::$connections[$this->conf];
  			return true;	
- 		}  		 		 		
-
+ 		} 
+ 		
  		//On essaye de se connecter a la base
  		try{
  			//Creation d'un objet PDO
@@ -94,8 +94,8 @@
  		if(isset($req['fields']))
  			$sql .= $this->sqlFields($req['fields']);
  		else
- 			$sql .= '*';
-
+ 			$sql .= "*";
+ 		
  		//depuis la table
  		$sql .= ' FROM '.$table.' ';
 
@@ -115,7 +115,7 @@
 	 			foreach ($req['conditions'] as $k => $v) {
 	 				//On escape les valeurs
 	 				if(!is_numeric($v)){ 
-	 					$v = '"'.mysql_real_escape_string($v).'"';	 					
+	 					$v = '"'.mysql_escape_string($v).'"';	 					
 	 				}
 	 				
 	 				//On incremente le tableau avec les conditions
@@ -149,7 +149,6 @@
  		else
  			$this->reportPDOError($pre,__FUNCTION__,$sql);	
  		
- 		
  	}
 
  	public function reportPDOError($pdo,$function,$sql){
@@ -161,7 +160,7 @@
  			debug($error[2]); 				
  			debug($sql);
  			exit();
- 			
+ 				
 		}
 		else {
 
@@ -170,15 +169,12 @@
 
 
  	}
-
-
-
  	//=======================================
  	// Execute une requete sql
- 	public function query($sql){
-
+ 	public function query($sql,$values){
+ 		
  		$pre = $this->db->prepare($sql);
- 		$pre->execute();
+ 		$pre->execute($values);
  		if($pre->errorCode()==0)
  			return $pre->fetchAll(PDO::FETCH_OBJ);
  		else
@@ -215,7 +211,8 @@
  	@work line with default key or $obj->key equal to $obj->id
  	============================================================*/
  	public function delete($obj){
-
+ 		
+ 		
  		if(is_numeric($obj)){
 	 		$sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey}=$obj";
 	 		$res = $this->db->query($sql);
@@ -273,13 +270,17 @@
  
  		//Pour chaque champ on cree les tableaux des valeurs 
  		foreach ($data as $k => $v) {
+
  			if($k!=$primaryKey){ //sauf si il s'agit de la clef primaire
+
  				if(!empty($v)||$v==0) {	// si la valeur nest pas vide , ou si elle egale 0
+
 		 			$fields[] = "$k=:$k"; //tableaux des valeurs en sql
 		 			$tab[":$k"] = $v; //tableau des valeurs pour la fonction execute de PDO
 	 			}
 	 		}
 	 		elseif(!empty($v)){ //Pour la clef primaire sauf si elle est vide
+
 	 			$tab[":$k"] = $v; //on la rajoute a la liste des champs pour l'update
 	 		}
  		}
@@ -299,10 +300,8 @@
  			$sql = 'INSERT INTO '.$table.' SET '.implode(',',$fields);
  		}
  		
- 		
- 		 
  		$pre = $this->db->prepare($sql); //prepare la requete
- 		//debug($pre);
+
  		$pre->execute($tab); //execute la requete grace au tableaux des valeurs ( :name, :contenu, :date, ...)
  		
  		//Si c'est un insert on recupere l'id de l'insertion
@@ -314,15 +313,13 @@
  		$this->action = $action;
 
  		//Si pas d'error retourne true
- 		if($pre->errorCode()==0){
- 			return true;
- 		}
- 		else { 			
- 			$this->error = $pre->errorInfo(); 			
- 			return false;
- 		} 
+ 		if($pre->errorCode()==0)
+			return true; 		
+ 		else
+ 			$this->reportPDOError($pre,__FUNCTION__,$sql);	
  		
  	}
+
  	public function increment($data){
 
  		if ( isset($data['table'])) {
@@ -347,151 +344,136 @@
 
 	public function validates($data, $rules = null, $field = null){
 
-		$errors = array();
 
-		//On recupere les regles de validation
-		if(!$rules){
-			$validates = $this->validates;
-		}
-		else {
+			$errors = array();
 
-			if($field==null)
-				$validates = $this->validates[$rules];
-			else
-				$validates = array($field=>$this->validates[$rules][$field]);
-		}
-		
-		//Vérifie les regles de validation pour chaque champs
-		foreach ($validates  as $k => $v) { 
-				
-			//Si la donnée correspondant est manquante -> erreur				
-			if(empty($data->$k)){
-
-				//Si il y a plusiers regles
-				if(isset($v['rules'])){
-					$rules = $v['rules']; 						
-					foreach ($rules as $r) {
-						if($r['rule']=='optionnal') $optionnal=true;
-
-					}
-					//if not optionnal
-					if(!isset($optionnal)){
-						$rule = $rules[0];
-						$errors[$k] = $rule['message'];
-					}
-					
-				}
-				//Si il y a qu'une regle
-				if(isset($v['rule'])){
-					
-					//Si le champ est optionnel, sauter au prochain champ
-					if($v['rule']=='optionnal') continue;
-					
-					$errors[$k] = $v['message'];
-				}
-				
+			//On recupere les regles de validation
+			if(!$rules){
+				$validates = $this->validates;
 			}
-			else{
-			
-				//Si il y a plusiers regles
-				if(isset($v['rules'])){
-					$rules = $v['rules']; 						
-				} 
-				//Si il y a qu'une regle
-				if(isset($v['rule'])){
-					
-					 $rules = array($v);
-				}
+			else {
 
-				//Pour toutes les regles correspondante
-				foreach ($rules as $rule) {									
-
-					if($rule['rule']=='notEmpty'){
-						if(empty($data->$k)) $errors[$k] = $rule['message'];				
-					}
-					elseif(strpos($rule['rule'],'confirm')===0){
-
-						$f = strtolower(str_replace('confirm', '', $rule['rule']));						
-						if($data->$f!=$data->$k) $errors[$k] = $rule['message'];
-						
-					}				
-					elseif($rule['rule']=='optionnal'){
-
-					}
-					elseif(!preg_match('/^'.$rule['rule'].'$/',$data->$k)){
-						$errors[$k] = $rule['message'];
-					}
-				}				
+				if($field==null)
+					$validates = $this->validates[$rules];
+				else
+					$validates = array($field=>$this->validates[$rules][$field]);
 			}
-			//reset optionnal
-			$optionnal=false;
-		}
+ 			
+ 			//Vérifie les regles de validation pour chaque champs
+ 			foreach ($validates  as $k => $v) { 
 
-
-
-		//Vérifie les fichiers uploadé
-		if(isset($_FILES)){ 				
-		
-		//Pour chaque fichier uploader
-			foreach ($_FILES as $key => $file) {
-
-				//Si le fichier n'est pas vide et quil n'y pas d'erreur d'envoi
-				if($file['error'] == 'UPLOAD_ERR_OK'){
-				
-					$input = str_replace('input','',$key);
-
-					//Si il y a des regles définies
-					if($this->validates_files[$input]){
-
- 					//Si il y a une limite de poids 
- 					if($this->validates_files[$input]['max_size']) {
-
- 						//Si le fichier est trop gros
- 						if($file['size']>$this->validates_files[$input]['max_size']){
-
- 							$errors[$input] = $this->validates_files[$input]['max_size_error'];
- 						}
+ 				//Si la donnée correspondant est manquante -> erreur				
+ 				if(!isset($data->$k)){
+ 					//Si il y a plusiers regles
+ 					if(isset($v['rules'])){
+ 						$rules = $v['rules'];
+ 						$rule = $rules[0];
+ 						$errors[$k] = $rule['message'];
  					}
- 					//Si il y a des extentions spécifiquement authorisées
-						if($this->validates_files[$input]['extentions']){
-							
-							$extention = substr(strrchr($file['name'], '.'),1);
-							$extentions = $this->validates_files[$input]['extentions'];
-
-							if(!in_array($extention,$extentions)){
-								$errors[$input] = $this->validates_files[$input]['extentions_error'];	 					
-							} 
-						}
-
-						//If Prevent hidden php code
-						if($this->validates_files[$input]['ban_php_code'] && $this->validates_files[$input]['ban_php_code'] == true){
-							//Vérifie qu'il n'y a pas de code php caché dans l'image				 							
-							if(strpos(file_get_contents($file['tmp_name']),'<?php')){
-
-								die('Oh whats there ? Some php into a image file !! You funny jocker !');
-							}	
-						}
+ 					//Si il y a qu'une regle
+ 					if(isset($v['rule'])){
+ 						
+ 						 $errors[$k] = $v['message'];
  					}
-				}
-			}
-		}
+ 				}
+ 				else{
 
-		$this->errors = $errors;
+ 					//Si il y a plusiers regles
+ 					if(isset($v['rules'])){
+ 						$rules = $v['rules']; 						
+ 					} 
+ 					//Si il y a qu'une regle
+ 					if(isset($v['rule'])){
+ 						
+ 						 $rules = array($v);
+ 					}
+ 					//Pour toutes les regles correspondante
+ 					foreach ($rules as $rule) {
+ 						
+						if($rule['rule']=='notEmpty'){
+	 						if(empty($data->$k)) $errors[$k] = $rule['message'];				
+	 					}
+	 					elseif($rule['rule']=='notNull'){
+	 						if($data->$k==0) $errors[$k] = $rule['message'];				
+	 					}
+	 					elseif($rule['rule']=='confirmPassword'){
+	 						if($data->$k != $data->password) $errors[$k] = $rule['message'];
+	 					}
+	 					elseif(!preg_match('/^'.$rule['rule'].'$/',$data->$k)){
+	 						$errors[$k] = $rule['message'];
+	 					}
+ 					}
+ 					
+ 				}
 
-		//Si une class Form est lié a ce model
-		if(isset($this->Form)){
-			$this->Form->setErrors($errors); //On lui envoi les erreurs
-		}
+ 			}
 
-		//Si pas d'erreur validates renvoi true
-		if(empty($errors)){
-			return true;
-		}
-		else {
-			//debug($errors);
-		}
+ 			//Vérifie les fichiers uploadé
+ 			if(isset($_FILES)){ 				
 				
-		return false;
+				//Pour chaque fichier uploader
+ 				foreach ($_FILES as $key => $file) {
+
+ 					$input = str_replace('input','',$key);
+
+ 					//Si le fichier n'est pas vide et quil n'y pas d'erreur d'envoi
+ 					if($file['error'] == 'UPLOAD_ERR_OK'){
+ 					
+	 					//Si il y a des regles définies
+	 					if($this->validates_files[$input]){
+
+		 					//Si il y a une limite de poids 
+		 					if($this->validates_files[$input]['max_size']) {
+
+		 						//Si le fichier est trop gros
+		 						if($file['size']>$this->validates_files[$input]['max_size']){
+
+		 							$errors[$input] = $this->validates_files[$input]['max_size_error'];
+		 						}
+		 					}
+		 					//Si il y a des extentions spécifiquement authorisées
+ 							if($this->validates_files[$input]['extentions']){
+ 								
+ 								$extention = substr(strrchr($file['name'], '.'),1);
+	 							$extentions = $this->validates_files[$input]['extentions'];
+
+	 							if(!in_array($extention,$extentions)){
+	 								$errors[$input] = $this->validates_files[$input]['extentions_error'];	 					
+ 								} 
+ 							}
+
+ 							//If Prevent hidden php code
+ 							if($this->validates_files[$input]['ban_php_code'] && $this->validates_files[$input]['ban_php_code'] == true){
+	 							//Vérifie qu'il n'y a pas de code php caché dans l'image				 							
+	 							if(strpos(file_get_contents($file['tmp_name']),'<?php')){
+
+	 								die('Oh wait... Is that php ?!');
+	 							}	
+ 							}
+		 				}
+	 				}
+	 				else {
+	 					$errors[$input] = "You did not send any file !";
+	 				}
+ 				}
+ 			}
+
+ 			$this->errors = $errors;
+
+ 			//Si une class Form est lié a ce model
+ 			if(isset($this->Form)){
+ 				$this->Form->setErrors($errors); //On lui envoi les erreurs
+ 			}
+
+ 			//Si pas d'erreur validates renvoi true
+ 			if(empty($errors)){
+ 				return true;
+ 			}
+ 			else {
+ 				//debug($errors);
+ 			}
+ 					
+ 			return false;
  			 			 		
  	}
 
@@ -516,7 +498,7 @@
  			$cond = array();
 	 			foreach ($conditions as $k => $v) {
 	 				if(!is_numeric($v)){ 
-	 					$v = '"'.mysql_real_escape_string($v).'"';	 					
+	 					$v = '"'.mysql_escape_string($v).'"';	 					
 	 				}
 	 				$cond[] = "$k=$v";	 			
 	 			}
@@ -553,7 +535,7 @@
 	 			$cond = array();
 	 			foreach ($conditions as $k => $v) {
 	 				if(!is_numeric($v) && substr($v, 0, 1) != ':' )
-	 					$v = '"'.mysql_real_escape_string($v).'"';
+	 					$v = '"'.mysql_escape_string($v).'"';
 	 				$cond[] = "$k=$v";
 	 			}
 	 			$c .= implode(' AND ',$cond);
@@ -565,6 +547,7 @@
 	 		$c .= '1=1';
 	 	return $c;
  	}
+
 
  	public function JOIN($table,$fields,$conds,$obj){
 
@@ -612,26 +595,6 @@
 		
 
 	}
-
-	public function joinUser($objects){
-
-		if(!is_array($objects)) $objects = array($objects);
-
-		foreach ($objects as $obj) {
-			
-			if(is_object($obj)){
-				if(isset($obj->user_id)){
-
-					$user = $this->findFirst(array('table'=>'users','fields'=>'*','conditions'=>array('user_id'=>$obj->user_id)));
-					$user = new User($user);
-					$obj->user = $user;
-				}
-			}
-		}
-
-		return $objects;		
-	}
-
 }
 
 
