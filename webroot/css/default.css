@@ -115,7 +115,7 @@ User registration page
 .form .control-group .controls label.radio { padding-left:5px; margin-right:20px; display: inline;}
 .form .control-group .controls p.help-inline { width: 100%; padding-left:0; margin-top:0px ;font-size:80%; color:#AAA; }
 .form .control-group .controls p.help-error { color:#820200;}
-.form .control-error .control-label { color: #820200; height:100%}
+.form .control-error .control-label { color: #820200; }
 .form .control-error .controls input,
 .form .control-error .controls select,
 .form .control-error .controls textarea { border-color: #820200;}
@@ -164,24 +164,6 @@ User account page
 .size32 { width:32px; height:32px;}
 .fleft { float:left;}
 .fright { float:right;}
-
-
-/**
-* Formulaire
-*/
-.formulaire { margin:10px auto 0 auto; margin-bottom:100px; width:70%;}
-.formulaire .form-block { overflow:hidden; margin-top:10px; margin-bottom:20px; padding:20px 50px; border:1px solid #CCC; background:#F2F2F2; box-shadow:0 0 4px 4px rgba(100,100,100,0.1);}
-.formulaire .control-group { float:left; margin:5px 0; width:100%;}
-.formulaire .control-label { position:relative; display:inline; color:#777; font:bold 150% Arial, Helvetica, sans-serif; }
-.formulaire .label-helper { display:inline; margin-left:5px; color:#AAA; text-align:left;}
-.formulaire .controls { margin:10px 0;}
-.formulaire .helper { padding:0; width:100%; color:#AAA; text-align:left;}
-.formulaire input[type=text], .formulaire textarea { width:100%; }
-.formulaire input, .formulaire textarea, .formulaire select {  padding:5px 5px; box-shadow:0 0 0 5px #E2E2E2; }
-.formulaire input[type=submit] { padding:10px 25px; width:auto; }
-.formulaire select { width:130px; -webkit-appearance:none;}
-.formulaire .submit .helper { display:inline; padding-left:15px; color:#AAA; text-align:left; }
-.formulaire div.geo-select { margin-right:10px; box-shadow: 0 0 0 5px #E2E2E2;}
 
 
 /*

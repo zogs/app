@@ -245,5 +245,18 @@ class JsonFileCache implements AutoloadCacheManager {
 
 
 //Exceptions
-class NotStandardInclude extends Exception {}
-class UnfoundClass extends Exception {}
+//Exceptions
+class NotStandardInclude extends zException {
+	public function __construct(){
+
+		parent::__construct('NotStandardInclude','00009999');
+	}
+}
+class UnfoundClass extends zException {
+	public function __construct($classname){
+
+		$msg = 'Class -'.$classname.'- has not been found';
+		parent::__construct($msg,'00009998');
+	}
+}
+

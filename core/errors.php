@@ -58,11 +58,11 @@ class zErrorException extends ErrorException {
 
 class zException extends Exception {
 
-	protected $msg;
-	protected $code;
-
 	public function __construct($msg='Errors class default message' ,$code = 0, Exception $previous = NULL){
 
+		$this->message = $msg;
+		$this->code = $code;
+		$this->previous = $previous;
 		zHandlingErrors::handler($this);
 			
 	}

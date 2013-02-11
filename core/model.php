@@ -404,15 +404,17 @@
 				}
 
 				//Pour toutes les regles correspondante
-				foreach ($rules as $rule) {
-					
+				foreach ($rules as $rule) {									
 
 					if($rule['rule']=='notEmpty'){
 						if(empty($data->$k)) $errors[$k] = $rule['message'];				
 					}
-					elseif($rule['rule']=='confirmPassword'){
-						if($data->$k != $data->password) $errors[$k] = $rule['message'];
-					}
+					elseif(strpos($rule['rule'],'confirm')===0){
+
+						$f = strtolower(str_replace('confirm', '', $rule['rule']));						
+						if($data->$f!=$data->$k) $errors[$k] = $rule['message'];
+						
+					}				
 					elseif($rule['rule']=='optionnal'){
 
 					}
