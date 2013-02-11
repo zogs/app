@@ -10,7 +10,7 @@
 </head>
 <body>
 
-        <div class="navbar" style="position:static">
+        <div class="navbar navbar-fixed-top">
           <div class="navbar-inner">
             <div   class="container">
               <a class="brand" href="<?php echo Router::url('admin/posts/index'); ?>">
@@ -31,7 +31,7 @@
           </div>
         </div>
 
-        <div class="container">
+        <div class="container mainContainer">
 
                 <?php echo $this->session->flash();?>
                 <?php echo $content_for_layout;?>
