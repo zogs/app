@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors','1');
+
 //$debut = microtime(true);
 define('DEBUG',2);
 define('WEBROOT',dirname(__FILE__));
@@ -10,6 +13,9 @@ define('BASE_URL',dirname(dirname($_SERVER['SCRIPT_NAME'])));
 
 //usefull functions
 include '../core/functions.php';
+
+//Date time zone
+date_default_timezone_set('Europe/Paris');
 
 //Errors gestion
 include '../core/errors.php';

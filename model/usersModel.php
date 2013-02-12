@@ -190,20 +190,7 @@ class UsersModel extends Model{
  					WHERE ";
 
 
- 		 if(isset($req['conditions'])){ 			
- 			if(!is_array($req['conditions']))
- 				$sql .= $req['conditions']; 				
- 			else {
-	 			$cond = array();
-		 			foreach ($req['conditions'] as $k => $v) {
-		 				if(!is_numeric($v))
-		 					$v = '"'.mysql_escape_string($v).'"';	 							 				
-		 				$cond[] = "$k=$v";	 			
-		 			}
-		 			$sql .= implode(' AND ',$cond);
- 			}
- 			
- 		}
+ 		 $sql .= $this->sqlConditions($req['conditions']);
 
  		if(isset($req['order'])){
  			if($req['order'] == 'random') $sql .= ' ORDER BY rand()';

@@ -10,8 +10,8 @@
 <body data-user_id="<?php echo $this->session->user('user_id'); ?>">
 
 
-	<div class="navbar navbar-fixed-top">
-	  <div class="navbar-inner">
+	<header class="navbar navbar-fixed-top">
+	  <nav class="navbar-inner">
 	    <div class="container">
       		<a class="brand" href="#">
 	      	  	<?php echo Conf::$website;?>
@@ -82,17 +82,19 @@
 
 			</ul>
 		</div>
-	  </div>
-	</div>
+	  </nav>
+	</header>
 
-	<div class="container mainContainer">	
+	<section class="container mainContainer">	
 			
 		<?php echo $content_for_layout;?>
-	</div>
+	</section>
 
 
 	<div class="modal fade" id="myModal"></div>
 
+	<footer class="footer">
+	</footer>
 
 </body>
 

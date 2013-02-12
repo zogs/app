@@ -213,22 +213,31 @@ class Controller {
 
 	public function redirect($url,$code = null){
 
-		if($code == 301) {
-			header("HTTP/1.1 301 Moved Permanently");
+		if (headers_sent()) {
+		    die("Redirect failed");
 		}
-		header("Location: ".Router::url($url));
-		exit();
+		else{
+			if($code == 301) {
+				header("HTTP/1.1 301 Moved Permanently");
+			}
+			header("Location: ".Router::url($url));
+		}		
 	}
 
 	public function reload(){
 
-		if(isset($_SERVER['HTTP_REFERER'])){
-			header("Location: ".$_SERVER['HTTP_REFERER']);				
+		if (headers_sent()) {
+		    die("Redirect failed");
 		}
 		else{
-			$this->redirect('/');
+		    if(isset($_SERVER['HTTP_REFERER']))
+				exit(header("Location: ".$_SERVER['HTTP_REFERER']));
+			else
+				$this->redirect('/');
 		}
-		exit();	
+		
+		exit();
+
 	}
 
 	public function getCountryCode(){

@@ -19,17 +19,17 @@ class Request{
 
 			$this->get = new stdClass();
 			foreach ($_GET as $k => $v) {
-				if(!is_numeric($v)){
-					if(is_array($v)){
-						$arr = array();
-						foreach ($v as $key => $value) {
-							$arr[$key] = mysql_real_escape_string($value);
-						}
-						$v = $arr;
-					}
-					else
-						$v = mysql_real_escape_string($v);
-				}
+				// if(!is_numeric($v)){
+				// 	if(is_array($v)){
+				// 		$arr = array();
+				// 		foreach ($v as $key => $value) {
+				// 			$arr[$key] = mysql_real_escape_string($value);
+				// 		}
+				// 		$v = $arr;
+				// 	}
+				// 	else
+				// 		$v = mysql_real_escape_string($v);
+				// }
 				$this->get->$k = $v;
 			}						
 
@@ -47,17 +47,17 @@ class Request{
 		if(!empty($_POST)){
 			$this->data = new stdClass();
 			foreach ($_POST as $k => $v) {
-				if(!is_numeric($v)){
-					if(is_array($v)){
-						$arr = array();
-						foreach ($v as $key => $value) {
-							$arr[$key] = mysql_real_escape_string($value);
-						}
-						$v = $arr;
-					}
-					else
-						$v = mysql_real_escape_string($v);
-				}
+				// if(!is_numeric($v)){
+				// 	if(is_array($v)){
+				// 		$arr = array();
+				// 		foreach ($v as $key => $value) {
+				// 			$arr[$key] = mysql_real_escape_string($value);
+				// 		}
+				// 		$v = $arr;
+				// 	}
+				// 	else
+				// 		$v = mysql_real_escape_string($v);
+				// }
 				$this->data->$k = $v;
 			}
 

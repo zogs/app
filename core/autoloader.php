@@ -239,19 +239,16 @@ class JsonFileCache implements AutoloadCacheManager {
 		return $this;
 	}
 	public function save(){				
-		file_put_contents( __DIR__.DIRECTORY_SEPARATOR.$this->filelocation. DIRECTORY_SEPARATOR .self::FILENAME, json_encode( $this->cache ) );
+		if(false === file_put_contents( __DIR__.DIRECTORY_SEPARATOR.$this->filelocation. DIRECTORY_SEPARATOR .self::FILENAME, json_encode( $this->cache ) ) ){
+			exit('can not write in cache');
+		}
 	}
 }
 
 
 //Exceptions
 //Exceptions
-class NotStandardInclude extends zException {
-	public function __construct(){
-
-		parent::__construct('NotStandardInclude','00009999');
-	}
-}
+class NotStandardInclude extends Exception {}
 class UnfoundClass extends zException {
 	public function __construct($classname){
 
