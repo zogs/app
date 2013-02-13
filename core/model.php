@@ -320,6 +320,62 @@
  		
  	}
 
+ 	
+ 	/*===========================================================	        
+ 	Save uploaded file
+ 	@param $name input name
+ 	@param $newname new name (optional)
+ 	@param $directory path of the directory where to move uploaded file (optional if defined in the validates rules )
+ 	$return true | false
+ 	============================================================*/
+ 	public function saveFile($name, $newname = NULL, $directory = NULL){
+
+ 		if(isset($_FILES)){
+ 				 				
+			if(isset($_FILES[$name]) ){
+
+				$file = $_FILES[$name];
+
+				foreach ($this->validates as $validates_action) {
+					
+					if(isset($validates_action[$name])) $validates = $validates_action[$name];
+					else throw new zException($name." - No validates rules associated with the file", 1);
+					
+				}
+
+				$extension = substr(strrchr($file['name'], '.'),1);
+
+				if(isset($newname)){
+					$destname = $newname.'.'.$extension;
+				} else {
+					$destname = $file['name'];
+				}
+
+				if(isset($directory)){
+					$destdir = String::directorySeparation($directory);
+				} elseif( isset($validates['params']['destination'])) {
+					$destdir = String::directorySeparation($validates['params']['destination']);
+				}
+
+				$destination = $destdir.DIRECTORY_SEPARATOR.$destname;
+
+				if(move_uploaded_file($file['tmp_name'], $destination)){
+
+					return true;
+				}
+				else {
+					throw new zException("Impossible to move the uploaded file", 1);
+					
+				}
+				
+			}
+ 			
+ 		}
+ 		return false;
+ 	}
+
+
+
  	public function increment($data){
 
  		if ( isset($data['table'])) {

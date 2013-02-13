@@ -35,7 +35,7 @@ input { height:auto; }
 /*=========
 MAIN SECTION
 ==========*/
-.mainContainer {margin-top:42px; padding-top:5px; height: 800px;}
+.mainContainer {margin-top:42px; padding-top:5px; min-height: 800px;}
 
 
 /*

@@ -9,4 +9,9 @@ class String {
 
 	}
 
+	static function directorySeparation($string){
+
+		return str_replace(array('/','\\'), DIRECTORY_SEPARATOR, $string);
+	}
+
 } ?>
