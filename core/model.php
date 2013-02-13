@@ -338,10 +338,10 @@
 
 				foreach ($this->validates as $validates_action) {
 					
-					if(isset($validates_action[$name])) $validates = $validates_action[$name];
-					else throw new zException($name." - No validates rules associated with the file", 1);
-					
+					if(isset($validates_action[$name])) $validates = $validates_action[$name];				
 				}
+
+				if(!isset($validates)) throw new zException($name." - No validates rules associated with the file", 1);
 
 				$extension = substr(strrchr($file['name'], '.'),1);
 
@@ -361,7 +361,7 @@
 
 				if(move_uploaded_file($file['tmp_name'], $destination)){
 
-					return true;
+					return $destination;
 				}
 				else {
 					throw new zException("Impossible to move the uploaded file", 1);
@@ -476,6 +476,7 @@ public function validates($data, $rules = null, $field = null){
 	 						$fieldtoconfirm = str_replace('confirm', '', $field);
 
 	 						if($data->$fieldtoconfirm!=$data->$field) $errors[$field] = $rule['message'];
+	 						else unset($data->$field);
 	 					}
 	 					elseif($rule['rule']=='checkbox' || $rule['rule']=='radio'){
 	 						

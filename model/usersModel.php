@@ -10,11 +10,12 @@ class UsersModel extends Model{
 				'message' => 'Vous devez choisir un pseudo'		
 				),
 			'email' => array(
-				'rule' => '[_a-zA-Z0-9-+]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-z]{2,4})',
+				'rule' => 'email',
 				'message' => "L'adresse email n'est pas valide"
 				),
 			'password' => array(
-				'rule' => '.{5,20}',
+				'rule' => 'regex',
+				'regex'=> '.{5,20}',
 				'message' => "Votre mot de passe doit etre entre 5 et 20 caracteres"
 				),
 			'confirm' => array(
@@ -22,20 +23,21 @@ class UsersModel extends Model{
 				'message' => "Vos mots de passe ne sont pas identiques"
 				),
 			'prenom' => array(
-				'rule'=> 'optionnal',
+				'rule'=> 'optional',
 				),
 			'nom' => array(
-				'rule' => 'optionnal',
+				'rule' => 'optional',
 				),
 			'age' => array(
 				'rules'=> array(
 							array(
-								'rule'=> '19[0-9]{1}[0-9]{1}',
+
+								'rule'=>"regex",
+								'regex'=>'19[0-9]{1}[0-9]{1}',
 								'message'=> "Between 1900 and 1999..."
 							),
 							array(
-								'rule'=>'optionnal',
-								'message'=>''
+								'rule'=>'optional',								
 							)
 						)
 				)
@@ -47,22 +49,24 @@ class UsersModel extends Model{
 								'rule' => 'notEmpty',
 								'message' => 'Your login is empty'
 									),
-							array('rule' => '.{5,20}',
+							array('rule' => 'regex',
+								'regex'=> '.{5,30}',
 								'message' => 'Login between 5 and 20 caracters'
 								)
 							)
 				),
 			'email' => array(
-				'rule' => '[_a-zA-Z0-9-+]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-z]{2,4})',
+				'rule' => 'email',
 				'message' => "L'adresse email n'est pas valide"
 				)
 		),
 		'account_profil' => array(
-			
+
 		),
 		'recovery_mdp' => array(
 			'password' => array(
-				'rule' => '.{5,20}',
+				'rule' => 'regex',
+				'regex' => '.{5,30}',
 				'message' => "Votre mot de passe doit etre entre 5 et 20 caracteres"
 				),
 			'confirm' => array(
@@ -76,7 +80,8 @@ class UsersModel extends Model{
 				'message' => "Votre mot de passe doit contenir entre 5 et 20 caracteres"
 				),
 			'password' => array(
-				'rule' => '.{5,20}',
+				'rule' => 'regex',
+				'regex' => '.{5,30}',
 				'message' => "Votre mot de passe doit etre entre 5 et 20 caracteres"
 				),
 			'confirm' => array(
@@ -90,17 +95,19 @@ class UsersModel extends Model{
 				'message' => "Enter your password"
 				)
 		),
-		'account_avatar'=>array(),
-	);
-
-	public $validates_files = array(
-		'avatar'=>array(
-			'extentions'=>array('png','gif','jpg','jpeg','JPG','bmp'),
-			'extentions_error'=>'Your avatar is not an image file',
-			'max_size'=>50000,
-			'max_size_error'=>'Your image is too big',
-			'ban_php_code'=>true
-			)
+		'account_avatar'=>array(
+			'avatar'=>array(
+						'rule'=>'file',
+						'params'=>array(
+							'destination'=>'media/user/avatar',
+							'extentions'=>array('png','gif','jpg','jpeg','JPG','bmp'),
+							'extentions_error'=>'Your avatar is not an image file',
+							'max_size'=>50000,
+							'max_size_error'=>'Your image is too big',
+							'ban_php_code'=>true
+							),
+						)
+			),
 	);
 
 
@@ -143,33 +150,6 @@ class UsersModel extends Model{
 			return true;
 		else
 			return false;
-
-	}
-
-	public function saveUserAvatar($user_id){
-
- 		//Les vérifications sont faites dans model/validates
-
- 		$tmp = $_FILES['avatar'];
- 		$ext = $extention = substr(strrchr($tmp['name'], '.'),1);
- 
- 		$newname = 'u'.$user_id.'.'.$ext;
- 		$directory = 'media/user/avatar';
- 		$destination = $directory.'/'.$newname;
-
- 		
- 		if(move_uploaded_file($tmp['tmp_name'], $destination)){
-		
- 			$user = new StdClass();
- 			$user->user_id = $user_id;
- 			$user->avatar = $destination;
-
- 			$this->table = 'users';
- 			if($this->save($user)){
- 				return true;
- 			}
- 		}
- 		else return false;
 
 	}
 

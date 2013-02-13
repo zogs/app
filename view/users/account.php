@@ -106,7 +106,7 @@
 					
 				<?php echo $this->Form->input('avatar','Avatar',array('icon'=>'icon-bullhorn','type'=>'file')); ?>
 					
-				<input type="submit" class="btn btn-large btn-inverse" value="Change avatar" />		
+				<input type="submit" class="btn btn-large btn-inverse" value="Save avatar" />		
 		
 			<?php endif ;?>
 

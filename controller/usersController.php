@@ -355,31 +355,34 @@ class UsersController extends Controller{
 
 	    			if($this->Users->validates($data,'account_avatar')){
 
-	    				if($this->Users->saveUserAvatar($user_id)){
+	    				if($destination = $this->Users->saveFile('avatar','u'.$data->user_id)){
 
 	    					$this->session->setFlash('Your avatar have been changed ! ', 'success');
 
-	    					//get the new avatar and set it in the session
-	    					$new = $this->Users->findFirst(array('fields'=>'avatar','conditions'=>array('user_id'=>$user_id)));
-	    					$user = $this->session->user('obj');
-	    					$user->avatar = $new->avatar;
-	    					$this->session->write('user', $user);
+	    					$u = new stdClass();
+	    					$u->user_id = $data->user_id;
+	    					$u->avatar = $destination;
+	    					$u->table = 'users';
+				 			$this->Users->save($u);
+				 				
+				 			$u = $this->session->user('obj');
+				 			$u->avatar = $destination;
+				 			$this->session->write('user', $u);
 	    				}
-	    				else
-	    					$this->session->setFlash('Sorry something goes wrond.. Please retry', 'error');
 	    			}	    			
 	    			else
 	    				$this->session->setFlash('Please review your file','error');
 	    		}
+
+
+	    		
 	    		/*====================
 					MODIFY PASSWORD
 	    		=====================*/
 	    		if($this->request->post('action') == 'password')
 	    		{
 	    			
-	    			if($this->Users->validates($data,'account_password')){
-
-		    			if($this->request->post('password') == $this->request->post('confirm')){
+	    			if($data = $this->Users->validates($data,'account_password')){
 
 		    				$db = $this->Users->findFirst(array(
 		    					'fields' => 'user_id,salt,hash',
@@ -393,12 +396,10 @@ class UsersController extends Controller{
 		    					$data->user_id = $user_id;
 		    					
 		    					$this->Users->save($data);
-		    					$this->session->setFlash('Your password has been changed !');
+		    					$this->session->setFlash('Your password have been changed !');
 
 		    				}
-		    				else $this->session->setFlash('Your old password is not good','error');
-		    			}
-		    			else $this->session->setFlash('Your new passwords are not the same','error');
+		    				else $this->session->setFlash('Your old password is not correct','error');
 		    		}
 		    		else 
 		    			$this->session->setFlash('Please review your informations','error');
