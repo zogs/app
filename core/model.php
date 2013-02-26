@@ -104,26 +104,7 @@
 
  			$sql .= ' WHERE ';
 
- 			//Si les conditions sont pas un tableau , genre une requete personnelle
- 			if(!is_array($req['conditions'])){
- 				$sql .= $req['conditions']; 				
- 			}
- 			else {
-
- 			$cond = array();
- 			//On parse toutes les conditions du  tableau
-	 			foreach ($req['conditions'] as $k => $v) {
-	 				//On escape les valeurs
-	 				if(!is_numeric($v)){ 
-	 					$v = '"'.mysql_escape_string($v).'"';	 					
-	 				}
-	 				
-	 				//On incremente le tableau avec les conditions
-	 				$cond[] = "$k=$v";	 			
-	 			}
-	 			//Enfin on rassemble les conditions et on les ajoute à la requete sql
-	 			$sql .= implode(' AND ',$cond);
- 			}
+ 			$sql .= $this->sqlConditions($req['conditions']); 			
  			
  		} 	
 
@@ -171,7 +152,7 @@
  	}
  	//=======================================
  	// Execute une requete sql
- 	public function query($sql,$values){
+ 	public function query($sql,$values = array()){
  		
  		$pre = $this->db->prepare($sql);
  		$pre->execute($values);
@@ -206,7 +187,8 @@
 
  	/*===========================================================	        
  	Delete
- 	@param $obj = object of values 
+ 	@param $obj = object of values , 
+ 	@need $obj->id = id number to delete
  	@work delete from default table or $obj->table 
  	@work line with default key or $obj->key equal to $obj->id
  	============================================================*/
@@ -215,7 +197,7 @@
  		
  		if(is_numeric($obj)){
 	 		$sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey}=$obj";
-	 		$res = $this->db->query($sql);
+	 		$res = $this->query($sql);
 			return $res;
 		}
 		elseif(is_object($obj)){
@@ -231,7 +213,8 @@
 
 
 			$sql = "DELETE FROM ".$table." WHERE ".$key."=".$obj->id;
-			$res = $this->db->query($sql);
+
+			$res = $this->query($sql);
 			return $res;
 		}
  	}
@@ -320,7 +303,6 @@
  		
  	}
 
- 	
  	/*===========================================================	        
  	Save uploaded file
  	@param $name input name
@@ -373,6 +355,7 @@
  		}
  		return false;
  	}
+
 
 
 
@@ -438,8 +421,7 @@ public function validates($data, $rules = null, $field = null){
 					if(isset($model['rule']) && $model['rule']!='file'){
 						
 						//Si le champ est optionnel, sauter au prochain champ
-						if($model['rule']=='optional') continue;
-						
+						if($model['rule']=='optional') continue;					
 						$errors[$field] = $model['message'];
 					}
 					
@@ -472,8 +454,8 @@ public function validates($data, $rules = null, $field = null){
 	 						
 	 					}
 	 					elseif(strpos($rule['rule'],'confirm')===0){
-
-	 						$fieldtoconfirm = str_replace('confirm', '', $field);
+	 						
+	 						$fieldtoconfirm = strtolower(str_replace('confirm', '', $rule['rule']));
 
 	 						if($data->$fieldtoconfirm!=$data->$field) $errors[$field] = $rule['message'];
 	 						else unset($data->$field);
@@ -583,7 +565,8 @@ public function validates($data, $rules = null, $field = null){
  			if(empty($errors)){
  				return $data;
  			}
- 				
+ 			
+
  			return false;
  			 			 		
  	}
@@ -594,7 +577,7 @@ public function validates($data, $rules = null, $field = null){
 	$params $conditions 
 	@params $second : temps en seconde à deduire de à partir de maintenant
  	*/
- 	public function countNew($params){
+ 	public function countNewEntrySince($params){
 
  		extract($params);
 
@@ -602,26 +585,34 @@ public function validates($data, $rules = null, $field = null){
  		$sql .=" FROM ".$this->table;
  		$sql .=" WHERE ";
  		if(isset($conditions)){
- 			if(!is_array($conditions)){
- 				$sql .= $conditions; 				
- 			}
- 			else {
- 			$cond = array();
-	 			foreach ($conditions as $k => $v) {
-	 				if(!is_numeric($v)){ 
-	 					$v = '"'.mysql_escape_string($v).'"';	 					
-	 				}
-	 				$cond[] = "$k=$v";	 			
-	 			}
-	 			$sql .= implode(' AND ',$cond);
- 			}
  			
+ 			$sql .= $this->sqlConditions($conditions);
  		}
  		$sql .=" AND ".$date_field." > DATE_SUB( CURRENT_TIMESTAMP , INTERVAL $second SECOND)";
 
 		$pre = $this->db->prepare($sql);
  		$pre->execute();
  		return $pre->fetch(PDO::FETCH_OBJ);
+
+ 	}
+
+ 	public function countNewEntryByID($conditions, $min_ID = 0){
+
+ 		$sql = 'SELECT COUNT( '.$this->primaryKey.' ) as count';
+ 		$sql .= ' FROM '.$this->table.' WHERE ';
+
+ 		if(isset($conditions)){
+ 			$sql .= $this->sqlConditions($conditions);
+ 		}
+ 		else
+ 			$sql .= ' 1==1 ';
+
+ 		$sql .= ' AND '.$this->primaryKey.'>'.$min_ID;
+
+ 		$pre = $this->query($sql,$conditions);
+ 		$count = $pre[0]->count;
+
+ 		return $count;
 
  	}
 
@@ -645,6 +636,7 @@ public function validates($data, $rules = null, $field = null){
 	 		if(is_array($conditions)){
 	 			$cond = array();
 	 			foreach ($conditions as $k => $v) {
+
 	 				if(!is_numeric($v) && substr($v, 0, 1) != ':' )
 	 					$v = $this->db->quote($v);
 	 				$cond[] = "$k=$v";
@@ -706,4 +698,34 @@ public function validates($data, $rules = null, $field = null){
 		
 
 	}
+
+
+	
+	/*	
+	function joinUser
+	join user obj to any obj that have a "user_id" param
+	$params obj or array of obj
+	@need obj need user_id param
+ 	*/
+
+	public function joinUser($objects,$fields = '*'){
+
+		if(!is_array($objects)) $objects = array($objects);
+
+		foreach ($objects as $obj) {
+			
+			if(is_object($obj)){
+				if(isset($obj->user_id)){
+
+					$user = $this->findFirst(array('table'=>'users','fields'=>$fields,'conditions'=>array('user_id'=>$obj->user_id)));
+					$user = new User($user);
+					$obj->user = $user;
+				}
+			}
+		}
+
+		return $objects;		
+	}
+
+
 }
