@@ -2,22 +2,26 @@
 
 class Request{
 
-	public $url; //url appelé par l'utilisateur
-	public $page = 1; //Pagination
-	public $prefix =false; //Prefixes
-	public $data = false; //Donnees de formulaire
+	public static $url; //url appelé par l'utilisateur
+	public static $page = 1; //Pagination
+	public static $prefix =false; //Prefixes
+	public static $data = false; //Donnees de formulaire
+	public static $get = false;
+	public static $controller;
+	public static $action;
+	public static $params;	
 
 	//Permet de récupérer la requete url demandé
-	function __construct() {
+	public static function init(){
 		
-		$this->url = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
-		//$this->url = str_replace(BASE_URL."/", "", $_SERVER['REQUEST_URI']); //Recuperation du PATH_INFO 
-		
+		self::$url = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+		//self::$url = str_replace(BASE_URL."/", "", 
+		//$_SERVER['REQUEST_URI']); //Recuperation du PATH_INFO 
 
 		//Récuperation des données GET dans un objet
 		if(!empty($_GET)){
 
-			$this->get = new stdClass();
+			self::$get = new stdClass();
 			foreach ($_GET as $k => $v) {
 				// if(!is_numeric($v)){
 				// 	if(is_array($v)){
@@ -30,22 +34,22 @@ class Request{
 				// 	else
 				// 		$v = mysql_real_escape_string($v);
 				// }
-				$this->get->$k = $v;
+				self::$get->$k = $v;
 			}						
 
 		}
-		
-		if(!isset($this->get->page) || $this->get->page <=0 ){
-			 $this->page = 1;
+			
+		if(!isset(self::$get->page) || self::$get->page <=0 ){
+			 self::$page = 1;
 		}
 		else {
-			$this->page = round($this->get->page);
+			self::$page = round(self::$get->page);
 		}
 
 
 		//Récuperation des données POST dans un objet
 		if(!empty($_POST)){
-			$this->data = new stdClass();
+			self::$data = new stdClass();
 			foreach ($_POST as $k => $v) {
 				// if(!is_numeric($v)){
 				// 	if(is_array($v)){
@@ -58,25 +62,27 @@ class Request{
 				// 	else
 				// 		$v = mysql_real_escape_string($v);
 				// }
-				$this->data->$k = $v;
+				self::$data->$k = $v;
 			}
 
 		}
 
+		
+
 	}
 
 	//Renvoi le parametre GET demandé ou renvoi false
-	public function get($param = null){	
-
+	public static function get($param = null){	
+		
 		if($param){	
-			if(isset($this->get->$param)){
-				return $this->get->$param;
+			if(isset(self::$get->$param)){
+				return self::$get->$param;
 			}
 			else return false;
 		}
 		else {
 			if(!empty($_GET)){
-				return $this->get;
+				return self::$get;
 			} 
 			else {
 				return false;
@@ -84,17 +90,17 @@ class Request{
 		} 
 	}
 
-	public function post($param = null){
+	public static function post($param = null){
 
 		if($param){
-			if(isset($this->data->$param)){
-				return $this->data->$param;
+			if(isset(self::$data->$param)){
+				return self::$data->$param;
 			}
 			else return false;
 		}
 		else {
 			if(!empty($_POST)){
-				return $this->data;
+				return self::$data;
 			}
 			else {
 				return false;

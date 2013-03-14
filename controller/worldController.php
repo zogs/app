@@ -82,10 +82,10 @@ class WorldController extends Controller
 		$this->loadModel('Worlds');
 
 
-		if($this->request->get('query')){
+		if(Request::get('query')){
 
 			$cities = $this->Worlds->suggestCities(array(
-													'prefix'=>$this->request->get('query'),
+													'prefix'=>Request::get('query'),
 													'CC1'=>'FR')
 													);
 
@@ -103,7 +103,7 @@ class WorldController extends Controller
 			}
 
 			$json = array(
-						'query'=>$this->request->get('query'),
+						'query'=>Request::get('query'),
 						'suggestions'=>$suggestions,
 						'data'=>$citiesCode
 						);
@@ -118,12 +118,12 @@ class WorldController extends Controller
 		$this->layout ="default";
 		$this->loadModel('Worlds');
 		
-		if($this->request->get('cityID') && $this->request->get('arround')){
+		if(Request::get('cityID') && Request::get('arround')){
 
-			$city = $this->Worlds->findFirst(array('table'=>'world_cities','fields'=>array('LATITUDE','LONGITUDE'),'conditions'=>array('UNI'=>$this->request->get('cityID'))));		
+			$city = $this->Worlds->findFirst(array('table'=>'world_cities','fields'=>array('LATITUDE','LONGITUDE'),'conditions'=>array('UNI'=>Request::get('cityID'))));		
 
 			$params = array();
-			$params['arround'] = $this->request->get('arround');
+			$params['arround'] = Request::get('arround');
 			$params['Lat'] = $city->LATITUDE;
 			$params['Lon'] = $city->LONGITUDE;
 			$params['location'] = array('CC1'=>'FR','ADM1'=>'A1');
@@ -140,7 +140,7 @@ class WorldController extends Controller
  		$this->loadModel('Worlds');
  		$this->layout = 'none';
 
- 		$ADM = $this->request->get('ADM'); 
+ 		$ADM = Request::get('ADM'); 
  		if($ADM=='city') return false;		
  		$ADM1 = '';
  		$ADM2 = '';
@@ -158,27 +158,27 @@ class WorldController extends Controller
  		
 
  		//Recuperation des parametres
- 		if($this->request->get('CC1')){ 			
- 			$CC1 = $this->request->get('CC1');
+ 		if(Request::get('CC1')){ 			
+ 			$CC1 = Request::get('CC1');
  		} 		
  		else { 
  			$CC1 = $this->getCountryCode();
  		}
- 		if($this->request->get('ADM1'))	{
- 			$ADM1 = $this->request->get('ADM1');
- 			$ADM_PARENT = $this->request->get('ADM1');		
+ 		if(Request::get('ADM1'))	{
+ 			$ADM1 = Request::get('ADM1');
+ 			$ADM_PARENT = Request::get('ADM1');		
  		}		
- 		if($this->request->get('ADM2'))	{
- 			$ADM2 = $this->request->get('ADM2');
- 			$ADM_PARENT = $this->request->get('ADM2');
+ 		if(Request::get('ADM2'))	{
+ 			$ADM2 = Request::get('ADM2');
+ 			$ADM_PARENT = Request::get('ADM2');
  		}
- 		if($this->request->get('ADM3'))	{
- 			$ADM3 = $this->request->get('ADM3');
-			$ADM_PARENT = $this->request->get('ADM3');
+ 		if(Request::get('ADM3'))	{
+ 			$ADM3 = Request::get('ADM3');
+			$ADM_PARENT = Request::get('ADM3');
  		}		
- 		if($this->request->get('ADM4'))	{
- 			$ADM4 = $this->request->get('ADM4');
- 			$ADM_PARENT = $this->request->get('ADM4');
+ 		if(Request::get('ADM4'))	{
+ 			$ADM4 = Request::get('ADM4');
+ 			$ADM_PARENT = Request::get('ADM4');
  		}	
 
  		//debug('CC1:'.$CC1. ' ADM:'.$ADM.' ADM_PARENT:'.$ADM_PARENT);

@@ -9,6 +9,7 @@
  	public $id; //valeur de la clef courante
  	public $action;
  	public $errors = array(); // tableaux des erreurs à afficher
+ 	public $validates = array();
 
 
 
@@ -113,13 +114,18 @@
  			$cond = array();
  			//On parse toutes les conditions du  tableau
 	 			foreach ($req['conditions'] as $k => $v) {
-	 				//On escape les valeurs
-	 				if(!is_numeric($v)){ 
-	 					$v = '"'.mysql_escape_string($v).'"';	 					
-	 				}
+
+	 				if(!empty($v)){
+
+	 					//On escape les valeurs
+		 				if(!is_numeric($v)){ 
+		 					$v = '"'.mysql_escape_string($v).'"';	 					
+		 				}
 	 				
-	 				//On incremente le tableau avec les conditions
-	 				$cond[] = "$k=$v";	 			
+		 				//On incremente le tableau avec les conditions
+		 				$cond[] = "$k=$v";
+	 				}
+	 					 			
 	 			}
 	 			//Enfin on rassemble les conditions et on les ajoute à la requete sql
 	 			$sql .= implode(' AND ',$cond);
@@ -140,7 +146,7 @@
 
  		}
  		
- 		// debug($sql);
+ 		//debug($sql);
  		$pre = $this->db->prepare($sql);
  		$pre->execute();
 
@@ -171,12 +177,17 @@
  	}
  	//=======================================
  	// Execute une requete sql
- 	public function query($sql,$values){
+ 	public function query($sql,$values = array()){
  		
  		$pre = $this->db->prepare($sql);
  		$pre->execute($values);
- 		if($pre->errorCode()==0)
- 			return $pre->fetchAll(PDO::FETCH_OBJ);
+ 		if($pre->errorCode()==0){
+
+ 			if($pre->columncount()==0) return true;
+ 			else return $pre->fetchAll(PDO::FETCH_OBJ);
+ 			
+ 		}
+ 			
  		else
  			$this->reportPDOError($pre,__FUNCTION__,$sql);
  	}
@@ -192,7 +203,7 @@
 
  	}
 
- 	public function findCount($conditions){
+ 	public function findCount($conditions = ''){
 
  		$res = $this->findFirst( array(
 				'fields'     => 'COUNT('.$this->primaryKey.') as count',
@@ -233,6 +244,12 @@
 			$sql = "DELETE FROM ".$table." WHERE ".$key."=".$obj->id;
 			$res = $this->db->query($sql);
 			return $res;
+		}
+		elseif(is_array($obj)){
+
+			foreach ($obj as $o) {
+				$this->delete($o);
+			}
 		}
  	}
 
@@ -282,6 +299,7 @@
 	 		elseif(!empty($v)){ //Pour la clef primaire sauf si elle est vide
 
 	 			$tab[":$k"] = $v; //on la rajoute a la liste des champs pour l'update
+	 			$this->id = $v; // l'id de l'element est sauvegardé pour être utilisé depuis un controlleur
 	 		}
  		}
  		// debug($data);
@@ -304,7 +322,7 @@
 
  		$pre->execute($tab); //execute la requete grace au tableaux des valeurs ( :name, :contenu, :date, ...)
  		
- 		//Si c'est un insert on recupere l'id de l'insertion
+ 		//Si c'est un insert 'on recupere l'id de l'insertion'
  		if($action=='insert'){
  			$this->id = $this->db->lastInsertId();
  		}
@@ -314,7 +332,7 @@
 
  		//Si pas d'error retourne true
  		if($pre->errorCode()==0)
-			return true; 		
+			return $this->id; 		
  		else
  			$this->reportPDOError($pre,__FUNCTION__,$sql);	
  		
@@ -473,7 +491,7 @@ public function validates($data, $rules = null, $field = null){
 	 					}
 	 					elseif(strpos($rule['rule'],'confirm')===0){
 
-	 						$fieldtoconfirm = str_replace('confirm', '', $field);
+	 						$fieldtoconfirm = strtolower(str_replace('confirm', '', $rule['rule']));
 
 	 						if($data->$fieldtoconfirm!=$data->$field) $errors[$field] = $rule['message'];
 	 						else unset($data->$field);
@@ -482,11 +500,15 @@ public function validates($data, $rules = null, $field = null){
 	 						
 	 						if(!is_array($data->$field)) $checkboxs = array( $data->$field);
 	 						else $checkboxs = $data->$field;
-	 							
- 							foreach ($rule['mustbetrue'] as $betrue) {
+	 						
+	 						if(!empty($rule['mustbetrue']))	{
+
+	 							foreach ($rule['mustbetrue'] as $betrue) {
  								
- 								if(!in_array($betrue,$checkboxs)) $errors[$field] = $rule['messages'][$betrue];
- 							} 								 							
+ 									if(!in_array($betrue,$checkboxs)) $errors[$field] = $rule['messages'][$betrue];
+ 								} 	
+	 						}
+ 															 							
 	 						foreach ($checkboxs as $checkbox) {
 	 								
 	 								$data->$checkbox = 1;	 
@@ -625,16 +647,17 @@ public function validates($data, $rules = null, $field = null){
 
  	}
 
- 	public function sqlFields($fields){
+ 	public function sqlFields($fields = array() ){
 
+ 		if(empty($fields)) return ' * ';
+ 		
  		$f = '';
-		if($fields && !empty($fields))
-			if(is_array($fields))
- 				$f .= implode(', ',$fields); 			
- 			elseif(is_string($fields))
- 				$f .= $fields; 			 		
- 		else
- 			$f .= '*';
+		if(is_array($fields))
+			$f .= implode(', ',$fields); 			
+		elseif(is_string($fields))
+			$f .= $fields; 			 		
+		else
+			$f .= ' * ';
  		return $f; 	
  	}
 
@@ -671,7 +694,7 @@ public function validates($data, $rules = null, $field = null){
 
 		if(is_object($obj)){
 
-			if(preg_match_all("/:([a-zA-Z\_\-]+)/",$sql,$matches)){
+			if(preg_match_all("/:([a-zA-Z0-9\_\-]+)/",$sql,$matches)){
 				unset($matches[0]);
 				foreach ($matches as $key) {
 		

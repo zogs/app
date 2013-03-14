@@ -16,7 +16,7 @@ class Router{
 	/**
 	 * Permet de passer une url
 	 */	
-	static function parse($url,$request){
+	static function parse($url){
 		//On enleve les / au debut et a la fin
 		$url = trim($url,'/');
 
@@ -45,22 +45,22 @@ class Router{
 
 		//On vérifie si il y  a un prefixe
 		if(in_array($params[0],array_keys(self::$prefixes))){
-			$request->prefix = self::$prefixes[$params[0]];
+			Request::$prefix = self::$prefixes[$params[0]];
 			array_shift($params);
 		}
 
 		//On met dans un tableau les differentes parties de l'url		
-		$request->controller = $params[0]; //le controller en premier
-		$request->action = isset($params[1])? $params[1] : 'index'; //l'action en second
+		Request::$controller = $params[0]; //le controller en premier
+		Request::$action = isset($params[1])? $params[1] : 'index'; //l'action en second
 		foreach (self::$prefixes as $k => $v) { //On ajoute le prefixe au nom de l'action
-			if(strpos($request->action,$v.'_') === 0){
-				$request->prefix = $v;
-				$request->action = str_replace($v.'_', '', $request->action);
+			if(strpos(Request::$action,$v.'_') === 0){
+				Request::$prefix = $v;
+				Request::$action = str_replace($v.'_', '', Request::$action);
 			}
 		}
-		$request->params = array_slice( $params , 2); //et tout le reste en parametres
+		Request::$params = array_slice( $params , 2); //et tout le reste en parametres
 
-
+		
 		return true;
 
 	}
@@ -137,12 +137,25 @@ class Router{
 			}
 		}
 
+		//Add lang
+		$url = Router::addLang($url);
 		//Security token
 		$url = Router::addToken($url);	
-
 		//Correction 
 		$url = str_replace('//','/',BASE_URL.'/'.$url);
 
+		return $url;
+	}
+
+	static function addLang($url){
+
+		if(isset($_GET['lang'])){
+			if(strpos($url,'?'))
+				$url .= '&lang='.$_GET['lang'];
+			else
+				$url .= '?lang='.$_GET['lang'];
+
+		}
 		return $url;
 	}
 

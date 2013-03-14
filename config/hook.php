@@ -1,5 +1,5 @@
 <?php 
-if($this->request->prefix == 'admin'){
+if(Request::$prefix == 'admin'){
 	$this->layout = 'admin'; 
 
 

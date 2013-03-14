@@ -16,12 +16,19 @@ class Form{
 		$this->errors = $errors;
 	}
 
+	public function getErrors(){
+		return $this->errors;
+	}
+
 	public function wrapInput($id, $label, $input, $params = null){		
 
 		//Gestion des erreurs
 		$error = false;
 		$classError ='';
 
+		//if it is a checkbox or radio remove '[]' from the id
+		$id = str_replace('[]','',$id);
+		
 		//Si il y a une erreur qui correspond a ce champ
 		if(isset($this->errors[$id])){
 			
@@ -34,6 +41,8 @@ class Form{
 
 		//if submit button return input
 		if($label=='submit') return $input;
+
+		
 
 		//Bootstrap html
 		$html = '<div class="control-group '.$classError.'" id="control-'.$id.'">';
@@ -89,14 +98,14 @@ class Form{
 		}
 
 		
-		if(isset($options['value'])){
+		if(isset($options['value']) && $options['value']!=''){
 			$value = $options['value'];
 		}
-		elseif(!isset($this->controller->request->data->$id)){ //Si le champ n'a pas de valeur pré-rempli
+		elseif(!isset(Request::$data->$id)){ //Si le champ n'a pas de valeur pré-rempli
 			$value='';
 		}
 		else{ //Sinon on recupere la valeur dans les données passé en post dans l'objet request
-			$value = $this->controller->request->data->$id;
+			$value = Request::$data->$id;
 		}
 
 		//return if submit button
@@ -160,7 +169,7 @@ class Form{
 
 
 
-	public function Select($id,$label,$options,$params){
+	public function Select($id,$label,$options,$params = array()){
 
 		$html = $this->wrapInput($id,$label,$this->_select($id,$options,$params),$params);
 
@@ -178,10 +187,10 @@ class Form{
 
 	public function _selectNumber( $id, $start = 0, $end = 10, $params = null){
 
-		(isset($params['class']))? $class = $params['class'] : $class = '' ;
-		(isset($params['default']))? $selected = $params['default'] : $selected = '';
-		(isset($params['placeholder']))? $placeholder = $params['placeholder'] : $placeholder = '';
-		(isset($params['javascript']))? $javascript = $params['javascript'] : $javascript = '';
+		(!empty($params['class']))? $class = $params['class'] : $class = '' ;
+		(!empty($params['default']))? $selected = $params['default'] : $selected = '';
+		(!empty($params['placeholder']))? $placeholder = $params['placeholder'] : $placeholder = '';
+		(!empty($params['javascript']))? $javascript = $params['javascript'] : $javascript = '';
 
 		$years = array();
 
@@ -212,7 +221,15 @@ class Form{
 	public function _select($id,$options,$params){
 
 		(isset($params['class']))? $class = $params['class'] : $class = '' ;
-		(isset($params['default']))? $selected = $params['default'] : $selected = '';
+		if(!empty($params['default'])){
+			$selected = $params['default'];
+		}
+		elseif(!isset(Request::$data->$id)){ //Si le champ n'a pas de valeur pré-rempli
+			$selected=null;
+		}
+		else{ //Sinon on recupere la valeur dans les données passé en post dans l'objet request
+			$selected = Request::$data->$id;
+		}
 		(isset($params['placeholder']))? $placeholder = $params['placeholder'] : $placeholder = '';
 		(isset($params['javascript']))? $javascript = $params['javascript'] : $javascript = '';
 		(isset($params['style']))? $style = $params['style'] : $style = '';

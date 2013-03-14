@@ -20,7 +20,7 @@ date_default_timezone_set('Europe/Paris');
 //Errors gestion
 include '../core/errors.php';
 function uncatchError($errno, $errstr, $errfile, $errline ) {
-	echo 'uncatchError';
+	
     new zErrorException($errno, $errstr, $errfile, $errline);
 }
 function uncatchException($exception){

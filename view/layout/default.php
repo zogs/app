@@ -13,22 +13,22 @@
 	<header class="navbar navbar-fixed-top">
 	  <nav class="navbar-inner">
 	    <div class="container">
-      		<a class="brand" href="#">
+      		<a class="brand" href="<?php echo Router::url('pages/view/4/homepage');?>">
 	      	  	<?php echo Conf::$website;?>
 			</a>
-			<form class ="navbar-search pull-left" action="<?php echo Router::url('manifs/index'); ?>" method="get">
+			<form class ="navbar-search pull-left" action="#" method="get">
 			<input type ="text" class="search-query nav-search" name="rch" placeholder="Search">
 			</form>
 
 			<ul class="nav">
-				<li><a href="<?php echo Router::url('pages/home');?>">Homepage</a></li>				
-				<?php
 				
+				<?php
 				//Recuperation du Menu
 				//Appel de ma methode getMenu du controlleur Pages
-				$pagesMenu = $this->request('Pages','getMenu');				
-				foreach ($pagesMenu as $v) : ?>
-					<li><a href='<?php echo BASE_URL;?>/pages/view/<?php echo $v->id;?>/<?php echo $v->slug;?>' > <?php echo $v->name; ?></a></li>
+				$pagesMenu = $this->call('Pages','getMenu');
+
+				foreach ($pagesMenu as $v) : ?>				
+					<li><a href='<?php echo Router::url("pages/view/$v->id/$v->slug");?>' ><?php echo $v->title; ?></a></li>
 				<?php 
 				endforeach;
 				?>

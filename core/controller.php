@@ -13,12 +13,10 @@ class Controller {
 		$this->session = new Session($this);	
 		$this->Form = new Form($this);
 		$this->Date = new Date($this->session);
-
-		if($request){
-			$this->request = $request; //ON stocke la request dans l'instance
-			$this->security($request); //On check le jeton de sécurité
-			require ROOT.DS.'config'.DS.'hook.php'; //Systeme de hook pour changer le layer en fonction du prefixe
-		}
+			
+		$this->security(); //On check le jeton de sécurité
+		require ROOT.DS.'config'.DS.'hook.php'; //Systeme de hook pour changer le layer en fonction du prefixe
+	
 
 		
 	}
@@ -41,7 +39,7 @@ class Controller {
 			if(strpos($view,'/')===0){
 				$view = ROOT.DS.'view'.$view.'.php'; //On rend la page demandé
 			} else {
-				$view = ROOT.DS.'view'.DS.$this->request->controller.DS.$view.'.php'; //Sinon on utlise le systeme MVC
+				$view = ROOT.DS.'view'.DS.Request::$controller.DS.$view.'.php'; //Sinon on utlise le systeme MVC
 			}
 		}
 		else { //Sinon une vue personnalisée est appelée
@@ -52,7 +50,7 @@ class Controller {
 		if(!file_exists($view)){
 			
 			if(Conf::$debug==1){
-				$this->e404('The controller :'.$this->request->controller.' has no view :'.$this->request->action);
+				$this->e404('The controller :'.Request::$controller.' has no view :'.Request::$action);
 				exit();
 			}
 			else {
@@ -199,12 +197,14 @@ class Controller {
 	// @params array to pass to the action
 	// $controller prefixe du Controller .ex: users
 	// $action action à appeler
-	public function request($controller,$action, $params = array() ){
+	public function call($controller,$action, $params = array() ){
 
 		$controller .= 'Controller';
 		require_once ROOT.DS.'controller'.DS.$controller.'.php';
+
+		$r = new stdClass();
+
 		$c = new $controller;
-		$c->request = $this->request;
 		$c->Form = $this->Form;
 		
 		return call_user_func_array(array($c,$action),$params);
@@ -255,18 +255,14 @@ class Controller {
 		}
 	}
 
-	public function getLanguage(){
+	public function getLang(){		
+		
 
-
-		if($this->session->getLang()){
-			return $this->session->getLang();
-		}
-		else if($this->CookieRch->read('lang')){
-			return $this->CookieRch->read('lang');
-		}
-		else {
-			return Conf::$lang;
-		}
+		if(Request::get('lang')) return Request::get('lang');
+		if($this->session->lang()) return $this->session->lang();	
+		//if($this->CookieRch->read('lang')) return $this->CookieRch->read('lang');	
+		
+		return Conf::$languageDefault;
 	}
 
 	public function has($property){
@@ -276,45 +272,46 @@ class Controller {
 	}
 
 
-	//Permet de vérifier le jeton de securité
-	//@params request object
-	public function security($request){
+	//Permet de vérifier le jeton de securité de la requete par rapport a la session
+	//
+	public function security(){
 
-		if($request->get()){
-
-			if($request->get('token')){
-
-				if($request->get('token')!=$this->session->read('token')){
-
-					//$this->session->setFlash("bad token","error");
-					$this->e404('Your security token is outdated, please log in again');
-				}
-				else {
-					unset($this->get->token);
-				}
-			}
-		}
-
-		if($request->post()){
-
-			if(!$request->post('token')){
+		if(Request::post()){
+			
+			if(!Request::post('token')){
 
 				$this->session->setFlash("Warning security token is missing!!!","error");
 				$this->e404('Please log in again');
 			}
 			else {
 
-				if($request->post('token')!=$this->session->read('token')){
+				if(Request::post('token')!=$this->session->read('token')){
 					
 					$this->session->setFlash("Your security token is outdated, please log in again","error");
 					$this->e404('Your security token is outdated, please log in again');
 					
 				}
-				if($request->post('token')==$this->session->read('token')){
-					unset($this->request->data->token);
+				if(Request::post('token')==$this->session->read('token')){
+					unset(Request::$data->token);
 				}
 			}			
 		}
+		elseif(Request::get()){
+
+			if(Request::get('token')){
+
+				if(Request::get('token')!=$this->session->read('token')){
+
+					//$this->session->setFlash("bad token","error");
+					$this->e404('Your security token is outdated, please log in again');
+				}
+				else {
+					unset(Request::$get->token);
+				}
+			}
+		}
+
+
 	}
 }
 ?>

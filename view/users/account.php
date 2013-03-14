@@ -59,7 +59,7 @@
 					<label for="CC1" class="control-label">Localisation</label>			
 					<div class="controls">
 						<i class='icon-form icon-home'></i>
-						<?php $options = $this->request('world','locate',array($user)); ?>					
+						<?php $options = $this->call('world','locate',array($user)); ?>					
 					</div>
 				</div>	
 				

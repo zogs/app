@@ -1,12 +1,13 @@
 <?php 
 
+//Title for brwoser
+$title_for_layout = $page->title;
 
-$title_for_layout = $page->name;
 
+echo $this->session->flash();
 
 ?>
 
-<div class="hero-unit">
-	<h1><?php echo $page->name;?></h1>
-	<small><?php echo $page->content; ?></small>
+<div class="hero-unit">	
+	<?php echo $page->content; ?>
 </div>

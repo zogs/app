@@ -15,17 +15,43 @@
             <div   class="container">
               <a class="brand" href="<?php echo Router::url('admin/posts/index'); ?>">
                                 Admin.
-                        </a>
-                        <form class ="navbar-search pull-left">
-                        <input type ="text" class="search-query" placeholder="Search">
-                        </form>
+                        </a>                       
 
                         <ul class="nav">
                                 <li><a href="<?php echo Router::url('/'); ?>">Voir le site</a></li>
-                                <li><a href="<?php echo Router::url('admin/posts/index'); ?>">Article</a></li>
                                 <li><a href="<?php echo Router::url('admin/pages/index'); ?>">Pages</a></li>
+                                <li><a href="<?php echo Router::url('admin/candidate/index');?>">Candidats</a></li>
                                 <li><a href="<?php echo Router::url('users/logout'); ?>">Deconnexion</a></li>
                                 
+                        </ul>
+
+                        <ul class="nav pull-right">
+                            <?php if ($this->session->user()): ?>
+                                <li><a href="<?php echo Router::url('users/thread');?>">
+                                        <img class="nav-avatar" src="<?php echo Router::webroot($this->session->user('obj')->getAvatar()); ?>" />   
+                                        <span class="nav-login"><?php echo $this->session->user('login'); ?></span>
+                                </a></li>
+                                <li class="dropdown">   
+                        
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="<?php echo Router::url('users/logout'); ?>">Déconnexion</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="<?php echo Router::url('users/account'); ?>">Mon Compte</a></li>                       
+                                    </ul>
+                                </li>
+                            <?php else: ?>
+
+                                <form class="loginForm" action="<?php echo Router::url('users/login'); ?>" method='post'>
+                                    <input type="login" name="login" required="required" placeholder="Login or email" autofocus="autofocus" value="admin"/>
+                                    <input type="password" name="password" required="required" placeholder="Password" value="fatboy" />
+                                    <input type="hidden" name="token" value="<?php echo $this->session->token();?>" />
+                                    <input type="submit" value="OK" />
+                                </form>
+
+                            <?php endif ?>
                         </ul>
                 </div>
           </div>
@@ -59,6 +85,11 @@ tinyMCE.init({
         // Skin options
         skin : "o2k7",
         skin_variant : "silver",
+
+        // Absolute URL
+        relative_urls : false,
+        remove_script_host : false,
+        document_base_url : "http://climatologie.u-bourgogne.fr/ecole/",
 
         // Example content CSS (should be your site CSS)
         content_css : "css/example.css",

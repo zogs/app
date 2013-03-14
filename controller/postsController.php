@@ -10,7 +10,7 @@ class PostsController extends Controller {
 			$conditions = array('online'=>1,'type'=>'post');			
 			$d['posts'] = $this->Posts->find(array(
 				'conditions'=>array('online'=>1,'type'=>'post'),
-				'limit'=>(($this->request->page-1)*$perPage).','.$perPage
+				'limit'=>((Request::$page-1)*$perPage).','.$perPage
 			));
 			$d['total'] = $this->Posts->findCount($conditions);
 			$d['nbpage'] = ceil($d['total']/$perPage);
@@ -51,11 +51,11 @@ class PostsController extends Controller {
 			$this->loadModel('Posts');
 
 			$d['id'] ='';
-			if($this->request->data){
-				if($this->Posts->validates($this->request->data)){
-					$this->request->data->type = 'post';
-					$this->request->data->created = date('Y-m-d h:i:s');
-					$this->Posts->save($this->request->data);
+			if(Request::$data){
+				if($this->Posts->validates(Request::$data)){
+					Request::$data->type = 'post';
+					Request::$data->created = date('Y-m-d h:i:s');
+					$this->Posts->save(Request::$data);
 					$id = $this->Posts->id; //retourne l'id de l'update
 					$this->session->setFlash('Le contenu a bien été modifié');
 					$this->redirect('admin/posts/index');
@@ -67,7 +67,7 @@ class PostsController extends Controller {
 			}	
 			else {
 				if($id){			
-					$this->request->data = $this->Posts->findFirst(array(
+					Request::$data = $this->Posts->findFirst(array(
 						'conditions' => array('id' => $id)
 						));
 					$d['id'] = $id; 
@@ -89,7 +89,7 @@ class PostsController extends Controller {
 			$d['posts'] = $this->Posts->find(array(
 				'fields'     => 'id,name,online',
 				'conditions' =>array('type'=>'post'),
-				'limit'      =>(($this->request->page-1)*$perPage).','.$perPage
+				'limit'      =>((Request::$page-1)*$perPage).','.$perPage
 			));
 			$d['total'] = $this->Posts->findCount($conditions);
 			$d['nbpage'] = ceil($d['total']/$perPage);

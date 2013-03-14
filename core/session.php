@@ -1,7 +1,9 @@
 <?php 
-class Session {
+class Session {	
 
-	function __construct($controller){
+	public $controller;
+
+	public function __construct($controller){
 
 		$this->controller = $controller;
 
@@ -160,11 +162,11 @@ class Session {
 		}
 		else return 0;
 	}
-	public function getLang(){
-		if(isset($this->read('user')->lang) && $this->read('user')->lang!='')
-			return $this->read('user')->lang;		
-		else 
-			return Conf::$languageDefault;		
+	
+	public function lang(){
+		
+		if($this->user('lang')) return $this->user('lang');
+		return false;
 	}
 
 	public function getPays(){

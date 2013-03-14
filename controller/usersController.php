@@ -9,9 +9,9 @@ class UsersController extends Controller{
 		$this->layout = 'default';
 		$this->loadModel('Users');
 
-		if($this->request->data){		
+		if(Request::$data){		
 			
-			$data = $this->request->data;
+			$data = Request::$data;
 			$login = $data->login;
 
 			if(strpos($login,'@'))
@@ -96,9 +96,9 @@ class UsersController extends Controller{
 		if(isset($data) && is_object($data)){
 			$data = $data;
 		}
-		elseif($this->request->data){
+		elseif(Request::$data){
 
-			$data = $this->request->data;			
+			$data = Request::$data;			
 		}
 
 
@@ -126,7 +126,7 @@ class UsersController extends Controller{
 					$check = $this->Users->findFirst(array('fields'=>'user_id','conditions'=>array('login'=>$user->login)));							
 					if(!empty($check)) {
 						$this->session->setFlash("This login is already used","error");
-						$this->request->data = $data;
+						Request::$data = $data;
 
 					}
 					else {
@@ -135,7 +135,7 @@ class UsersController extends Controller{
 						$check = $this->Users->findFirst(array('fields'=>'user_id','conditions'=>array('email'=>$user->email)));
 						if(!empty($check)) {
 						$this->session->setFlash("The email ".$user->email." is already used","error");
-						$this->request->data = $data;
+						Request::$data = $data;
 
 						}
 						else {
@@ -179,11 +179,11 @@ class UsersController extends Controller{
 
 								
 				
-			//debug($this->request->data);
+			//debug(Request::$data);
 		}
 
 
-		$d['data'] = $this->request->data;
+		$d['data'] = Request::$data;
 
 		$this->set($d);
 	}
@@ -199,9 +199,9 @@ class UsersController extends Controller{
 		$this->loadModel('Users');
 		$this->view = 'users/login';
 
-		if($this->request->get('c') && $this->request->get('u') ) {
+		if(Request::$get('c') && Request::$get('u') ) {
 
-			$get       = $this->request->get;
+			$get       = Request::$get;
 			$user_id   = base64_decode(urldecode($get->u));			
 			$code_url = base64_decode(urldecode($get->c));
 
@@ -261,30 +261,30 @@ class UsersController extends Controller{
 	    	/*======================
 				If POST DATA are sended
 			========================*/
-	    	if($this->request->data) {							    		
+	    	if(Request::$data) {							    		
 
 	    		
-	    		$data = $this->request->data;
+	    		$data = Request::$data;
 
 	    		/*====================
 	    			MODIFY ACCOUNT
 	    		====================*/
-	    		if($this->request->post('action')=='account'){
+	    		if(Request::post('action')=='account'){
 
 	    			if($this->Users->validates($data,'account_info')){
 
-						$user = $this->Users->findFirst(array('fields'=>'login, email','conditions'=>array('user_id'=>$this->request->post('user_id'))));
+						$user = $this->Users->findFirst(array('fields'=>'login, email','conditions'=>array('user_id'=>Request::post('user_id'))));
 																
 						//If it's the not same user name
-						if($user->login != $this->request->post('login'))
-							$checklogin = $this->Users->findFirst(array('fields'=>'login','conditions'=>array('login'=>$this->request->post('login'))));
+						if($user->login != Request::post('login'))
+							$checklogin = $this->Users->findFirst(array('fields'=>'login','conditions'=>array('login'=>Request::post('login'))));
 						else
 							unset($data->login);							
 						
 
 						//if its not the same email
-						if($user->email != $this->request->post('email'))							
-							$checkemail = $this->Users->findFirst(array('fields'=>'email','conditions'=>array('email'=>$this->request->post('email'))));
+						if($user->email != Request::post('email'))							
+							$checkemail = $this->Users->findFirst(array('fields'=>'email','conditions'=>array('email'=>Request::post('email'))));
 						else
 							unset($data->email);
 							
@@ -320,14 +320,14 @@ class UsersController extends Controller{
 	    			}
 	    		}
 	    		else {
-	    			if($this->request->post('login')) unset($_POST['login']);
+	    			if(Request::post('login')) unset($_POST['login']);
 	    		}
 
 
 	    		/*====================
 					MODIFY INFO
 	    		=====================*/
-	    		if($this->request->post('action') == 'profil'){
+	    		if(Request::post('action') == 'profil'){
 
 	    			if($this->Users->validates($data,'account_profil')){
 
@@ -351,7 +351,7 @@ class UsersController extends Controller{
 	    		/*===================
 	    		 *   MODIFY AVATAR
 	    		===================== */
-	    		if($this->request->post('action') == 'avatar'){
+	    		if(Request::post('action') == 'avatar'){
 
 	    			if($this->Users->validates($data,'account_avatar')){
 
@@ -379,7 +379,7 @@ class UsersController extends Controller{
 	    		/*====================
 					MODIFY PASSWORD
 	    		=====================*/
-	    		if($this->request->post('action') == 'password')
+	    		if(Request::post('action') == 'password')
 	    		{
 	    			
 	    			if($data = $this->Users->validates($data,'account_password')){
@@ -389,10 +389,10 @@ class UsersController extends Controller{
 		    					'conditions'=> array('user_id'=>$user_id)
 		    					));
 
-		    				if($db->hash == md5($db->salt.$this->request->post('oldpassword'))){
+		    				if($db->hash == md5($db->salt.Request::post('oldpassword'))){
 
 		    					$data = new stdClass();
-		    					$data->hash = md5($db->salt.$this->request->post('oldpassword'));
+		    					$data->hash = md5($db->salt.Request::post('oldpassword'));
 		    					$data->user_id = $user_id;
 		    					
 		    					$this->Users->save($data);
@@ -408,7 +408,7 @@ class UsersController extends Controller{
 	    		/*====================
 					MODIFY DELETE
 	    		=====================*/
-	    		if($this->request->post('action') == 'delete'){
+	    		if(Request::post('action') == 'delete'){
 
 	    			if($this->Users->validates($data,'account_delete')){
 
@@ -417,7 +417,7 @@ class UsersController extends Controller{
 	    					'conditions'=>array('user_id'=>$user_id)
 	    					));
 	    				
-	    				if($db->hash == md5($db->salt.$this->request->post('password'))){
+	    				if($db->hash == md5($db->salt.Request::post('password'))){
 
 	    					
 	    					$this->Users->delete($user_id);
@@ -442,7 +442,7 @@ class UsersController extends Controller{
 					'conditions' => array('user_id'=>$user_id))
 				);	    	    	
 	    	// /!\ request->data used by Form class
-	    	$this->request->data = $user;
+	    	Request::$data = $user;
 
 	    	$d['user'] = $user;
 
@@ -467,17 +467,17 @@ class UsersController extends Controller{
 		$action='';
 		
 		//if user past the link we mailed him
-		if($this->request->get('c') && $this->request->get('u') ){
+		if(Request::get('c') && Request::get('u') ){
 
 			
 			//find that user 
-			$user_id = base64_decode(urldecode($this->request->get('u')));
+			$user_id = base64_decode(urldecode(Request::get('u')));
 			$user = $this->Users->findFirst(array(
 				'fields'=>array('user_id','salt'),
 				'conditions'=>array('user_id'=>$user_id)));
 			
 			//check the recovery code
-			$code = base64_decode(urldecode($this->request->get('c')));
+			$code = base64_decode(urldecode(Request::get('c')));
 			$hash = md5($code.$user->salt);
 			$user = $this->Users->findFirst(array(
 				'table'=>T_USER_RECOVERY,
@@ -505,10 +505,10 @@ class UsersController extends Controller{
 		}
 
 		//if user enter a new password
-		if($this->request->post('password') && $this->request->post('confirm') && $this->request->post('code') && $this->request->post('user')){
+		if(Request::post('password') && Request::post('confirm') && Request::post('code') && Request::post('user')){
 
 
-			$data    = $this->request->post();
+			$data    = Request::post();
 			
 			//find that user
 			$user_id = $data->user;
@@ -581,14 +581,14 @@ class UsersController extends Controller{
 		}
 
 		//If user enter his email address
-		if( $this->request->post('email') ) {
+		if( Request::post('email') ) {
 
 			$action = 'show_form_email';
 
 			//check his email
 			$user = $this->Users->findFirst(array(
 				'fields'=>array('user_id','email','login','salt'),
-				'conditions'=>array('email'=>$this->request->post('email')),				
+				'conditions'=>array('email'=>Request::post('email')),				
 			));
 
 			if(!empty($user)){
@@ -660,9 +660,9 @@ class UsersController extends Controller{
 
 		$d = array();
 
-		if($this->request->get){
+		if(Request::get){
 
-			$data = $this->request->get;
+			$data = Request::$get;
 			$type = $data->type;
 			$value = $data->value;	
 
