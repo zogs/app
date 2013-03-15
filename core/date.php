@@ -4,12 +4,6 @@
  */
  class Date
  {
- 	private $Session;
-
- 	public function __construct($session)
- 	{
- 		$this->session = $session;
- 	}
 
  	public static function MysqlNow(){
 
@@ -67,7 +61,7 @@
  	// 	$array = array('fr' => array('Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre')
  	// 			);
 
- 	// 	return $array[$this->session->getLang()][$num - 1];
+ 	// 	return $array[Session::getLang()][$num - 1];
 
  	// }
  } ?>

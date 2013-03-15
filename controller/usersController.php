@@ -42,9 +42,9 @@ class UsersController extends Controller{
 
 					//write user in session
 					$this->user = $user;
-					$this->session->write('user', $user);
-					$this->session->setToken();				
-					$this->session->setFlash('Vous êtes maintenant connecté');
+					Session::write('user', $user);
+					Session::setToken();				
+					Session::setFlash('Vous êtes maintenant connecté');
 					
 					//redirection
 					$loc = $_SERVER['HTTP_REFERER'];
@@ -60,11 +60,11 @@ class UsersController extends Controller{
 
 				}
 				else {
-					$this->session->setFlash('Mauvais mot de passe','error');
+					Session::setFlash('Mauvais mot de passe','error');
 				}						
 			}
 			else {
-				$this->session->setFlash("Le ".$field." <strong>".$data->login."</strong> n'existe pas dans la base de donnée",'error');
+				Session::setFlash("Le ".$field." <strong>".$data->login."</strong> n'existe pas dans la base de donnée",'error');
 			}
 			$data->password = "";				
 
@@ -76,7 +76,7 @@ class UsersController extends Controller{
 		
 		unset($_SESSION['user']);
 		unset($_SESSION['token']);
-		$this->session->setFlash('Vous êtes maintenant déconnecté','info',2);	
+		Session::setFlash('Vous êtes maintenant déconnecté','info',2);	
 		$this->reload();
 
 
@@ -118,14 +118,14 @@ class UsersController extends Controller{
 					$user->codeactiv = String::random(25);
 					$user->password = '';
 					$user->confirm = '';
-					$user->lang = $this->session->user('lang');
+					$user->lang = Session::user('lang');
 					$user->date_signin = Date::MysqlNow();	
 					$user->date_lastlogin = $user->date_signin;				
 
 					//check if login exist
 					$check = $this->Users->findFirst(array('fields'=>'user_id','conditions'=>array('login'=>$user->login)));							
 					if(!empty($check)) {
-						$this->session->setFlash("This login is already used","error");
+						Session::setFlash("This login is already used","error");
 						Request::$data = $data;
 
 					}
@@ -134,7 +134,7 @@ class UsersController extends Controller{
 						//check if email exist
 						$check = $this->Users->findFirst(array('fields'=>'user_id','conditions'=>array('email'=>$user->email)));
 						if(!empty($check)) {
-						$this->session->setFlash("The email ".$user->email." is already used","error");
+						Session::setFlash("The email ".$user->email." is already used","error");
 						Request::$data = $data;
 
 						}
@@ -146,35 +146,35 @@ class UsersController extends Controller{
 								$user_id = $this->Users->id;
 
 									if(isset($user->status) && $user->status!='group')
-										$this->session->setFlash("<strong>Welcome</strong>","success");
+										Session::setFlash("<strong>Welcome</strong>","success");
 
 
 									if($this->sendValidateMail(array('dest'=>$user->email,'user'=>$user->login,'codeactiv' =>$user->codeactiv,'user_id'=>$user_id)))
 									{
 										$d['Success'] = true;						
-										$this->session->setFlash("Un email <strong>a été envoyé</strong> à votre boite email. Pour confirmer votre incription, <strong>veuillez cliquer sur le lien</strong> présent dans cette email", "success");
-										$this->session->setFlash("Il est possible que ce email soit placé parmis les <strong>indésirables ou spam</strong> , pensez à vérifier !", "info");
+										Session::setFlash("Un email <strong>a été envoyé</strong> à votre boite email. Pour confirmer votre incription, <strong>veuillez cliquer sur le lien</strong> présent dans cette email", "success");
+										Session::setFlash("Il est possible que ce email soit placé parmis les <strong>indésirables ou spam</strong> , pensez à vérifier !", "info");
 									}
 									else {
 										$d['Success'] = false;
-										$this->session->setFlash("Il y a eu une erreur lors de l'envoi de l'email de validation", "error");
+										Session::setFlash("Il y a eu une erreur lors de l'envoi de l'email de validation", "error");
 									}
 							}
 							else {
 
 								$d['Success'] = false;
-								$this->session->setFlash("Il y a eu une erreur lors de l'enregistrement dans la base", "error");
+								Session::setFlash("Il y a eu une erreur lors de l'enregistrement dans la base", "error");
 							}					
 						}
 					}
 				}
 				else {				
-					$this->session->setFlash("Veuillez vérifier vos informations",'error');
+					Session::setFlash("Veuillez vérifier vos informations",'error');
 					debug($this->Users->errors);
 				}
 			}
 			else {
-				$this->session->setFlash("You forgot to accept the terms of use","error");
+				Session::setFlash("You forgot to accept the terms of use","error");
 			}			
 
 								
@@ -219,18 +219,18 @@ class UsersController extends Controller{
 					$data->valid = 1;
 					$this->Users->save($data);
 
-					$this->session->setFlash('<strong>Bravo</strong> '.$user->login.' ! Tu as validé ton inscription','success');
-					$this->session->setFlash('Tu peux te <strong>connecter</strong> dés maintenant!','info');
+					Session::setFlash('<strong>Bravo</strong> '.$user->login.' ! Tu as validé ton inscription','success');
+					Session::setFlash('Tu peux te <strong>connecter</strong> dés maintenant!','info');
 									
 
 				}
 				else {
-					$this->session->setFlash("Une erreur inconnue est intervenue pendant l'activation",'error');
+					Session::setFlash("Une erreur inconnue est intervenue pendant l'activation",'error');
 				}
 			}
 			else {	
 			debug('lol');			
-				$this->session->setFlash("Pas trouvé dans la bdd",'error');
+				Session::setFlash("Pas trouvé dans la bdd",'error');
 			}
 
 		}
@@ -246,17 +246,17 @@ class UsersController extends Controller{
     	/*======================
 			If user is logged
 		========================*/
-    	if($this->session->user('user_id'))
+    	if(Session::user('user_id'))
     	{
 
     		//if user is a group ,redirect to group page
-    		if($this->session->user('status')=='group'){
+    		if(Session::user('status')=='group'){
 
-    			$this->redirect('groups/account/'.$this->session->user('group_id').'/'.$this->session->user('slug'));
+    			$this->redirect('groups/account/'.Session::user('group_id').'/'.Session::user('slug'));
     		}
 
 
-	    	$user_id = $this->session->user('user_id');
+	    	$user_id = Session::user('user_id');
 	    	
 	    	/*======================
 				If POST DATA are sended
@@ -294,29 +294,29 @@ class UsersController extends Controller{
 
 		    					if($this->Users->saveUser($data,$user_id)){
 
-									$this->session->setFlash("Your account have been saved !","success");
+									Session::setFlash("Your account have been saved !","success");
 
 									//update session login									
-									$user = $this->session->user('obj');
+									$user = Session::user('obj');
 			    					if(isset($data->login)) $user->login = $data->login;
 			    					if(isset($data->lang)) $user->lang = $data->lang;			    					
-			    					$this->session->write('user', $user);
+			    					Session::write('user', $user);
 			    					
 								}
 								else{
-									$this->session->setFlash("Your account have not been saved, please retry","error");
+									Session::setFlash("Your account have not been saved, please retry","error");
 								}
 							}
 							else {
-								$this->session->setFlash("This email is already in use","error");
+								Session::setFlash("This email is already in use","error");
 							}
 	    				}
 	    				else {
-	    					$this->session->setFlash("This login is already in use","error");
+	    					Session::setFlash("This login is already in use","error");
 	    				}
 	    			}
 	    			else {
-	    				$this->session->setFlash("Please review the form","error");
+	    				Session::setFlash("Please review the form","error");
 	    			}
 	    		}
 	    		else {
@@ -335,15 +335,15 @@ class UsersController extends Controller{
 
 	    				if($this->Users->saveUser($data,$user_id)){
 
-	    					$this->session->setFlash('Your profil have been saved ! ','success');
+	    					Session::setFlash('Your profil have been saved ! ','success');
 	    				}
 	    				else {
-	    					$this->session->setFlash("Sorry but something goes wrong please retry",'error');
+	    					Session::setFlash("Sorry but something goes wrong please retry",'error');
 	    				}
 			    		
 		    		}
 		    		else 
-		    			$this->session->setFlash('Please review your informations','error');
+		    			Session::setFlash('Please review your informations','error');
 		    	
 	    		}
 
@@ -357,7 +357,7 @@ class UsersController extends Controller{
 
 	    				if($destination = $this->Users->saveFile('avatar','u'.$data->user_id)){
 
-	    					$this->session->setFlash('Your avatar have been changed ! ', 'success');
+	    					Session::setFlash('Your avatar have been changed ! ', 'success');
 
 	    					$u = new stdClass();
 	    					$u->user_id = $data->user_id;
@@ -365,13 +365,13 @@ class UsersController extends Controller{
 	    					$u->table = 'users';
 				 			$this->Users->save($u);
 				 				
-				 			$u = $this->session->user('obj');
+				 			$u = Session::user('obj');
 				 			$u->avatar = $destination;
-				 			$this->session->write('user', $u);
+				 			Session::write('user', $u);
 	    				}
 	    			}	    			
 	    			else
-	    				$this->session->setFlash('Please review your file','error');
+	    				Session::setFlash('Please review your file','error');
 	    		}
 
 
@@ -396,13 +396,13 @@ class UsersController extends Controller{
 		    					$data->user_id = $user_id;
 		    					
 		    					$this->Users->save($data);
-		    					$this->session->setFlash('Your password have been changed !');
+		    					Session::setFlash('Your password have been changed !');
 
 		    				}
-		    				else $this->session->setFlash('Your old password is not correct','error');
+		    				else Session::setFlash('Your old password is not correct','error');
 		    		}
 		    		else 
-		    			$this->session->setFlash('Please review your informations','error');
+		    			Session::setFlash('Please review your informations','error');
 	    		}
 
 	    		/*====================
@@ -423,15 +423,15 @@ class UsersController extends Controller{
 	    					$this->Users->delete($user_id);
 	    					unset($_SESSION['user']);
 	    					$user_id = 0;
-	    					$this->session->setFlash('Your account has been delete... <strong>Wait ? Why did you do that ??</strong>');
+	    					Session::setFlash('Your account has been delete... <strong>Wait ? Why did you do that ??</strong>');
 
 	    				}
 	    				else
-	    					$this->session->setFlash('Your password is not good','error');
+	    					Session::setFlash('Your password is not good','error');
 
 	    			}
 	    			else
-	    				$this->session->setFlash('Please review your password','error');
+	    				Session::setFlash('Please review your password','error');
 
 	    		}	    			    			  
 		    	
@@ -488,13 +488,13 @@ class UsersController extends Controller{
 			if(!empty($user)){
 
 				//show password form
-				$this->session->setFlash('Enter your new password','success');
+				Session::setFlash('Enter your new password','success');
 				$action = 'show_form_password';
 
 			}
 			else {
 				//else the link isnot good anymmore
-				$this->session->setFlash('Your link is not valid anymore. Please ask for a new password reset.','error');
+				Session::setFlash('Your link is not valid anymore. Please ask for a new password reset.','error');
 				$action = 'show_form_email';
 				
 			}
@@ -553,24 +553,24 @@ class UsersController extends Controller{
 						$this->Users->delete($del);
 
 						//redirect to connexion page
-						$this->session->setFlash("Your password have been changed !","success");
+						Session::setFlash("Your password have been changed !","success");
 						$this->redirect('users/login');
 					}
 					else {
 						$action = 'show_form_password';
-						$this->session->setFlash("Error while saving. Please retry","error");
+						Session::setFlash("Error while saving. Please retry","error");
 					}
 				}
 				else {
 					$action = 'show_form_password';
-					$this->session->setFlash("Please review your data","error");
+					Session::setFlash("Please review your data","error");
 				}
 
 			}
 			else
 			{
 				$action = 'show_form_email';
-				$this->session->setFlash("Error. Please ask for a new password reset.","error");
+				Session::setFlash("Error. Please ask for a new password reset.","error");
 			}
 
 			$d['code'] = $code;
@@ -626,22 +626,22 @@ class UsersController extends Controller{
 					//send email to user
 					if($this->sendRecoveryMail(array('dest'=>$user->email,'user'=>$user->login,'code' =>$code,'user_id'=>$user->user_id))){
 
-						$this->session->setFlash('An email have been send to you.','success');
-						$this->session->setFlash("Please tcheck the spam box if you can't find it.","warning");
+						Session::setFlash('An email have been send to you.','success');
+						Session::setFlash("Please tcheck the spam box if you can't find it.","warning");
 
 					}
 					else{
-						$this->session->setFlash('Error while sending the email. users/recovery','error');
+						Session::setFlash('Error while sending the email. users/recovery','error');
 						
 					}
 				}
 				else{
-					$this->session->setFlash('Error while saving data. users/recovery','error');
+					Session::setFlash('Error while saving data. users/recovery','error');
 					
 				}
 			}
 			else {
-				$this->session->setFlash('This email is not in our database','error');
+				Session::setFlash('This email is not in our database','error');
 			}
 
 
@@ -777,7 +777,7 @@ class UsersController extends Controller{
 
     public function index(){
 
-    	if($this->session->user()){
+    	if(Session::user()){
     		$this->thread();
     	}
     	else {
@@ -799,25 +799,25 @@ class UsersController extends Controller{
     	$this->loadModel('Comments');
 
     	//if user is logged
-    	if($this->session->user()){
+    	if(Session::user()){
 
     		//if user is numeric
-    		if(is_numeric($this->session->user('user_id'))){
+    		if(is_numeric(Session::user('user_id'))){
 
     			//if user is a group, redirect to group page
-    			if($this->session->user('status')=='group'){
+    			if(Session::user('status')=='group'){
 
     				$group = $this->Users->findFirst(array(
     					'table'=>'groups',
     					'fields'=>'group_id as id, slug',
-    					'conditions'=>array('user_id'=>$this->session->user('user_id'))
+    					'conditions'=>array('user_id'=>Session::user('user_id'))
     				));
 
     				$this->redirect('groups/view/'.$group->id.'/'.$group->slug);
     			} 
     				
     			//set $user_id
-    			$user_id = $this->session->user('user_id');
+    			$user_id = Session::user('user_id');
 
     			//User
     			$d['user'] = $this->Users->findUsers(array('fields'=>'user_id,login,avatar,bonhom', 'conditions'=>array('user_id'=>$user_id)));

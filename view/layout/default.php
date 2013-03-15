@@ -7,7 +7,7 @@
 	<title><?php echo isset($title_for_layout)?$title_for_layout : Conf::$website;?></title>
 	
 </head>
-<body data-user_id="<?php echo $this->session->user('user_id'); ?>">
+<body data-user_id="<?php echo Session::user('user_id'); ?>">
 
 
 	<header class="navbar navbar-fixed-top">
@@ -37,7 +37,7 @@
 				
 				<?php
 				//Admin section button
-				if($this->session->user('role')=='admin'):?>
+				if(Session::user('role')=='admin'):?>
 				<li><a href="<?php echo Router::url('admin/posts/index');?>">Admin.</a></li>
 				<?php endif;
 
@@ -50,10 +50,14 @@
 		
 
 			<ul class="nav pull-right">
-				<?php if ($this->session->user()): ?>
+
+				<li><a href="?lang=fr"><i class="flag flag-fr"></i></a></li>
+				<li><a href="?lang=en"><i class="flag flag-uk"></i></a></li>
+
+				<?php if (Session::user()): ?>
 					<li><a href="<?php echo Router::url('users/thread');?>">
-							<img class="nav-avatar" src="<?php echo Router::webroot($this->session->user('obj')->getAvatar()); ?>" />	
-							<span class="nav-login"><?php echo $this->session->user('login'); ?></span>
+							<img class="nav-avatar" src="<?php echo Router::webroot(Session::user('obj')->getAvatar()); ?>" />	
+							<span class="nav-login"><?php echo Session::user('login'); ?></span>
 					</a></li>
 					<li class="dropdown">	
 			
@@ -71,7 +75,7 @@
 					<form class="loginForm" action="<?php echo Router::url('users/login'); ?>" method='post'>
 						<input type="login" name="login" required="required" placeholder="Login or email" autofocus="autofocus" value="admin"/>
 						<input type="password" name="password" required="required" placeholder="Password" value="fatboy" />
-						<input type="hidden" name="token" value="<?php echo $this->session->token();?>" />
+						<input type="hidden" name="token" value="<?php echo Session::token();?>" />
 						<input type="submit" value="OK" />
 					</form>
 					<li><a href="<?php echo Router::url('users/login');?>">Login</a></li>	
@@ -105,7 +109,7 @@
  	/*===========================================================
  		Set security token
  	============================================================*/
- 	var CSRF_TOKEN = '<?php echo $this->session->token(); ?>';
+ 	var CSRF_TOKEN = '<?php echo Session::token(); ?>';
 
  	/*===========================================================
  		GOOGLE FONTS

@@ -1,6 +1,6 @@
 
 <div class="register">
-<?php echo $this->session->flash();?>
+<?php echo Session::flash();?>
 	<form class="form" id="form_register" autocomplete="on" action="<?php echo Router::url('users/register'); ?>" method="post" <?php echo (isset($Success))? 'class="hide"':''; ?>>
 		<h1>Sign in</h1>
 
@@ -27,7 +27,7 @@
 		</div>	
 		
 		<div class="actions">
-			<?php echo $this->Form->input('token','hidden',array('value'=>$this->session->token())) ;?>			
+			<?php echo $this->Form->input('token','hidden',array('value'=>Session::token())) ;?>			
 			<?php echo $this->Form->input('accept','hidden',array('value'=>1)); ?>
 			<p>En validant l'inscription j'accepte les conditions d'utilisations</p>
 			<input class="pull-right btn btn-large btn-inverse" type="submit" value="C'est parti !" />

@@ -45,7 +45,7 @@
 		 		<td><?php echo $v->id ?></td>
 		 	</tr>
 		 	<?php echo $this->Form->input('id','hidden',array('value'=>$v->id)) ;?>
-		 	<?php echo $this->Form->input('token','hidden',array('value'=>$this->session->token())) ;?>
+		 	<?php echo $this->Form->input('token','hidden',array('value'=>Session::token())) ;?>
 			 </form>
 		 <?php endforeach ?>
 	</tbody>

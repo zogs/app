@@ -131,7 +131,7 @@ class UsersModel extends Model{
 											'conditions'=>array('login'=>$user->login)
 											));
 			if(!empty($check)){
-				$this->session->setFlash("Sorry this login is in use.","error");
+				Session::setFlash("Sorry this login is in use.","error");
 				return false;
 			}
 
@@ -141,7 +141,7 @@ class UsersModel extends Model{
 												'conditions'=>array('mail'=>$user->mail)
 												));
 			if(!empty($checkmail)){
-				$this->session->setFlash("This email is already in use. Please try to recovery your password","error");
+				Session::setFlash("This email is already in use. Please try to recovery your password","error");
 				return false;
 			}
 		}		
@@ -213,7 +213,7 @@ class UsersModel extends Model{
 
 		$sql = "SELECT $fields FROM manif_participation as P 
 				LEFT JOIN manif_info as M ON M.manif_id = P.manif_id
-				LEFT JOIN manif_descr as D ON D.manif_id = P.manif_id AND D.lang='".$this->session->user('lang')."'
+				LEFT JOIN manif_descr as D ON D.manif_id = P.manif_id AND D.lang='".Session::user('lang')."'
 				WHERE user_id = :user_id";
 
 		foreach ($user_ids as $user_id) {
@@ -241,7 +241,7 @@ class UsersModel extends Model{
 	                 I.logo     as relatedLogo
 
         		FROM manif_participation as P
-        		LEFT JOIN manif_descr as D ON D.manif_id=P.manif_id AND D.lang='".$this->session->user('lang')."'	
+        		LEFT JOIN manif_descr as D ON D.manif_id=P.manif_id AND D.lang='".Session::user('lang')."'	
         		LEFT JOIN manif_info as I ON I.manif_id=P.manif_id
            		WHERE P.user_id = $user_id
       		UNION
@@ -260,7 +260,7 @@ class UsersModel extends Model{
                   	I.logo     as relatedLogo
               	FROM manif_comment AS C
               	LEFT JOIN manif_participation AS P ON P.user_id = $user_id
-              	LEFT JOIN manif_descr as D ON D.manif_id=P.manif_id AND D.lang='".$this->session->user('lang')."'
+              	LEFT JOIN manif_descr as D ON D.manif_id=P.manif_id AND D.lang='".Session::user('lang')."'
               	LEFT JOIN manif_info as I ON I.manif_id=P.manif_id	
              	WHERE C.context_id = P.manif_id AND C.context='manif' AND C.type='news'
 			ORDER BY date DESC

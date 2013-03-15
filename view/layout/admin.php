@@ -20,16 +20,15 @@
                         <ul class="nav">
                                 <li><a href="<?php echo Router::url('/'); ?>">Voir le site</a></li>
                                 <li><a href="<?php echo Router::url('admin/pages/index'); ?>">Pages</a></li>
-                                <li><a href="<?php echo Router::url('admin/candidate/index');?>">Candidats</a></li>
                                 <li><a href="<?php echo Router::url('users/logout'); ?>">Deconnexion</a></li>
                                 
                         </ul>
 
                         <ul class="nav pull-right">
-                            <?php if ($this->session->user()): ?>
+                            <?php if (Session::user()): ?>
                                 <li><a href="<?php echo Router::url('users/thread');?>">
-                                        <img class="nav-avatar" src="<?php echo Router::webroot($this->session->user('obj')->getAvatar()); ?>" />   
-                                        <span class="nav-login"><?php echo $this->session->user('login'); ?></span>
+                                        <img class="nav-avatar" src="<?php echo Router::webroot(Session::user('obj')->getAvatar()); ?>" />   
+                                        <span class="nav-login"><?php echo Session::user('login'); ?></span>
                                 </a></li>
                                 <li class="dropdown">   
                         
@@ -47,7 +46,7 @@
                                 <form class="loginForm" action="<?php echo Router::url('users/login'); ?>" method='post'>
                                     <input type="login" name="login" required="required" placeholder="Login or email" autofocus="autofocus" value="admin"/>
                                     <input type="password" name="password" required="required" placeholder="Password" value="fatboy" />
-                                    <input type="hidden" name="token" value="<?php echo $this->session->token();?>" />
+                                    <input type="hidden" name="token" value="<?php echo Session::token();?>" />
                                     <input type="submit" value="OK" />
                                 </form>
 
@@ -59,7 +58,7 @@
 
         <div class="container mainContainer">
 
-                <?php echo $this->session->flash();?>
+                <?php echo Session::flash();?>
                 <?php echo $content_for_layout;?>
         </div>
 </body>

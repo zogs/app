@@ -31,7 +31,7 @@ class PagesController extends Controller {
 				$page = $this->Contents->i18n($page, array('lang'=>$this->getLang(),'valid'=>1));
 				//Si la traduction demandé n'existe pas on cherche la langue par default , si n'existe pas redirege 404
 				if(empty($page->lang)){
-					$this->session->setFlash("La traduction demandé n'est pas disponible...","warning");
+					Session::setFlash("La traduction demandé n'est pas disponible...","warning");
 					$page = $this->Contents->i18n($page,array('lang'=>Conf::$languageDefault,'valid'=>1));
 					if(empty($page->lang)) $this->e404('Page introuvable');
 				}
@@ -75,10 +75,10 @@ class PagesController extends Controller {
 
 				if($this->Pages->savePage(Request::post())){
 
-					$this->session->setFlash("Page sauvegardé !","success");
+					Session::setFlash("Page sauvegardé !","success");
 				}
 				else
-					$this->session->setFlash("message","type");
+					Session::setFlash("message","type");
 			}
 
 			$lang = $this->getLang();

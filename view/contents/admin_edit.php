@@ -18,11 +18,11 @@
 	</div>
 </div>
 
-<?php echo $this->Form->input('online','En ligne',array("type"=>"checkbox")); ?>
+<?php echo $this->Form->input('valid','Traduction valide',array("type"=>"checkbox")) ;?>
 <?php echo $this->Form->input('type','type de contenu',array("value"=>Request::get('type'))) ;?>
 <?php echo $this->Form->input('position','Position',array()) ;?>
-<?php echo $this->Form->input('valid','Traduction valide',array("type"=>"checkbox")) ;?>
-<?php echo $this->Form->input('token','hidden',array('value'=>$this->session->token())) ;?>
+
+<?php echo $this->Form->input('token','hidden',array('value'=>Session::token())) ;?>
 
 <div class="control-group">
 	<label for="" class="control-label"></label>

@@ -57,11 +57,11 @@ class PostsController extends Controller {
 					Request::$data->created = date('Y-m-d h:i:s');
 					$this->Posts->save(Request::$data);
 					$id = $this->Posts->id; //retourne l'id de l'update
-					$this->session->setFlash('Le contenu a bien été modifié');
+					Session::setFlash('Le contenu a bien été modifié');
 					$this->redirect('admin/posts/index');
 				}
 				else{
-					$this->session->setFlash('Toi pas bien rentrer données!','error');
+					Session::setFlash('Toi pas bien rentrer données!','error');
 				}				
 
 			}	
@@ -100,10 +100,10 @@ class PostsController extends Controller {
 
 			$this->loadModel('Posts');
 			if($this->Posts->delete($id)){
-				$this->session->setFlash('Le contenu a bien été supprimé');	
+				Session::setFlash('Le contenu a bien été supprimé');	
 			}
 			else {
-				$this->session->setFlash('Erreur dans la suppression','error');
+				Session::setFlash('Erreur dans la suppression','error');
 			}
 			
 			$this->redirect('admin/posts/index');

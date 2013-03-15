@@ -10,9 +10,10 @@ class Controller {
 
 	function __construct($request=null){
 
-		$this->session = new Session($this);	
+		Session::init( $this );
+
 		$this->Form = new Form($this);
-		$this->Date = new Date($this->session);
+		$this->Date = new Date();
 			
 		$this->security(); //On check le jeton de sécurité
 		require ROOT.DS.'config'.DS.'hook.php'; //Systeme de hook pour changer le layer en fonction du prefixe
@@ -106,10 +107,7 @@ class Controller {
 			if(isset($this->Form)){
 				$this->$name->Form = $this->Form;	
 			}
-
-			if(isset($this->session)){
-				$this->$name->session = $this->session;
-			}
+	
 		}
 		else {
 			//echo 'Model '.$name.' deja chargé';
@@ -244,8 +242,8 @@ class Controller {
 	public function getCountryCode(){
 
 
-		if($this->session->getPays()){
-			return $this->session->getPays();
+		if(Session::getPays()){
+			return Session::getPays();
 		}
 		else if($this->CookieRch->read('CC1')){
 			return $this->CookieRch->read('CC1');
@@ -259,7 +257,7 @@ class Controller {
 		
 
 		if(Request::get('lang')) return Request::get('lang');
-		if($this->session->lang()) return $this->session->lang();	
+		if(Session::lang()) return Session::lang();	
 		//if($this->CookieRch->read('lang')) return $this->CookieRch->read('lang');	
 		
 		return Conf::$languageDefault;
@@ -280,18 +278,18 @@ class Controller {
 			
 			if(!Request::post('token')){
 
-				$this->session->setFlash("Warning security token is missing!!!","error");
+				Session::setFlash("Warning security token is missing!!!","error");
 				$this->e404('Please log in again');
 			}
 			else {
 
-				if(Request::post('token')!=$this->session->read('token')){
+				if(Request::post('token')!=Session::read('token')){
 					
-					$this->session->setFlash("Your security token is outdated, please log in again","error");
+					Session::setFlash("Your security token is outdated, please log in again","error");
 					$this->e404('Your security token is outdated, please log in again');
 					
 				}
-				if(Request::post('token')==$this->session->read('token')){
+				if(Request::post('token')==Session::read('token')){
 					unset(Request::$data->token);
 				}
 			}			
@@ -300,9 +298,9 @@ class Controller {
 
 			if(Request::get('token')){
 
-				if(Request::get('token')!=$this->session->read('token')){
+				if(Request::get('token')!=Session::read('token')){
 
-					//$this->session->setFlash("bad token","error");
+					//Session::setFlash("bad token","error");
 					$this->e404('Your security token is outdated, please log in again');
 				}
 				else {

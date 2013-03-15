@@ -1,11 +1,11 @@
 <div id="account">
 	
-	<?php echo $this->session->flash();?>
+	<?php echo Session::flash();?>
 	
 	<div class="dashboard">		
 		<div class="module mini-profile">		
 			<a class="" href="/">
-				<div class="fleft"><img src="<?php echo Router::webroot($this->session->user('obj')->getAvatar());?>" class="avatar size32" alt="<?php echo $user->login;?>"></div>
+				<div class="fleft"><img src="<?php echo Router::webroot(Session::user('obj')->getAvatar());?>" class="avatar size32" alt="<?php echo $user->login;?>"></div>
 				<div class="fleft"><b><?php echo $user->getLogin();?></b></div>
 		</div>
 
@@ -39,8 +39,8 @@
 
 		<form class="form" id="account-form" autocomplete="off" action="<?php echo Router::url('users/account/'.$action); ?>" method="post" enctype="multipart/form-data">
 			<?php echo $this->Form->_input('action','hidden',array('value'=>$action)); ?>
-			<?php echo $this->Form->_input('token','hidden',array('value'=>$this->session->token())) ;?>
-			<?php echo $this->Form->_input('user_id','hidden',array('value'=>$this->session->user('user_id'))) ;?>
+			<?php echo $this->Form->_input('token','hidden',array('value'=>Session::token())) ;?>
+			<?php echo $this->Form->_input('user_id','hidden',array('value'=>Session::user('user_id'))) ;?>
 
 			<?php //=========PROFIL================ ?>
 			<?php if($action=='profil'||$action==''): ?>
@@ -138,7 +138,7 @@
 
 		
 				<?php echo $this->Form->input('password','Yes i do', array('type'=>'password','icon'=>'icon-lock','placeholder'=>'Type your password and delete')); ?>
-				<?php echo $this->Form->input('token','hidden',array('value'=>$this->session->token())) ;?>
+				<?php echo $this->Form->input('token','hidden',array('value'=>Session::token())) ;?>
 				<input class="btn btn-large btn-inverse" type="submit" value="Delete" />
 
 			<?php endif ;?>

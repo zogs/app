@@ -9,7 +9,7 @@
 <?php echo $this->Form->input('id','hidden');  ?>
 <?php echo $this->Form->input('content','Contenu de l\'article',array("type"=>"textarea","class"=>"wysiwyg","style"=>"width:100%;","rows"=>5));  ?>
 <?php echo $this->Form->input('online','En ligne',array("type"=>"checkbox")); ?>
-<?php echo $this->Form->input('token','hidden',array('value'=>$this->session->token())) ;?>
+<?php echo $this->Form->input('token','hidden',array('value'=>Session::token())) ;?>
 
 <div class="actions">
 	<input type="submit" class="btn btn-primary" value="Envoyer" />

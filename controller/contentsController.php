@@ -23,10 +23,10 @@ class ContentsController extends Controller {
 					if($this->Contents->saveContent($new)){
 
 						if(empty($old)) $id= $this->Contents->id;
-						$this->session->setFlash("Contenu modifié","success");
+						Session::setFlash("Contenu modifié","success");
 					}
 					else
-						$this->session->setFlash("Error saving content","error");
+						Session::setFlash("Error saving content","error");
 				}
 
 			}
@@ -50,19 +50,19 @@ class ContentsController extends Controller {
 			
 			if($this->Contents->deleteContent($id)){
 
-				$this->session->setFlash("Page supprimé","success");
+				Session::setFlash("Page supprimé","success");
 
 				$i18ns = $this->Contents->findi18nContents($id);
 				if($this->Contents->deletei18nContents($i18ns)){
-					$this->session->setFlash("Traductions supprimés","success");
+					Session::setFlash("Traductions supprimés","success");
 				}
 				else {
-					$this->session->setFlash("Error lors de la suppression des traductions","error");
+					Session::setFlash("Error lors de la suppression des traductions","error");
 				}
 				
 			}
 			else {
-				$this->session->setFlash("Error lors de la suppression","error");
+				Session::setFlash("Error lors de la suppression","error");
 			}
 
 			$this->redirect('admin/pages/index');

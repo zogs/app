@@ -4,7 +4,7 @@
 $title_for_layout = $page->title;
 
 
-echo $this->session->flash();
+echo Session::flash();
 
 ?>
 
